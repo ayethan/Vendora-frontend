@@ -16,7 +16,7 @@ function App() {
     const resData = await axios.get("/user-details", { withCredentials: true });
 
     console.log("User Details:", resData.data?.data);
-    const dataApi = await resData.data;
+    const dataApi = resData.data;
     if(dataApi.success){
       console.log("User Details Fetched:", dataApi?.data);
       dispatch(setUserDetails(dataApi?.data));
@@ -31,9 +31,7 @@ function App() {
   }, []);
 
   return (
-      <AppContext.Provider value={{
-        fetchUserDetails
-      }}>
+      <AppContext.Provider value={{fetchUserDetails}}>
         <AllRoutes/>
       </AppContext.Provider>
 

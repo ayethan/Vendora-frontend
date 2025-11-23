@@ -35,8 +35,9 @@ function SignIn() {
     axios.post("/signin", data, { withCredentials: true })
       .then((response) => {
         console.log(response.data);
+        const user = response.data.data
         toast.success("Signed In Successfully");
-        navigate("/");
+        {user.role == "Admin" ? navigate("/admin") : navigate("/")  }
         fetchUserDetails();
       })
       .catch((error) => {
@@ -53,12 +54,12 @@ function SignIn() {
         <div className="grid gap-5 p-5">
           <div>
             <label>Email</label>
-            <input type="email" name="email" value={data.email} onChange={handleOnChange} className="w-full h-10 bg-gray-100  rounded-md px-2" />
+            <input type="email" name="email" value={data.email} onChange={handleOnChange} className="w-full h-12 bg-gray-100  rounded-md px-2" />
           </div>
           <div>
             <label>Password</label>
             <div className="relative">
-              <input type={showPassword ? "text" : "password"} name="password" onChange={handleOnChange} className="w-full h-10 bg-gray-100  rounded-md px-2 pr-10"/>
+              <input type={showPassword ? "text" : "password"} name="password" onChange={handleOnChange} className="w-full h-12 bg-gray-100  rounded-md px-2 pr-10"/>
               <div className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer" onClick={()=>setShowPassword((preve)=>!preve)}>
 
               {showPassword ?
@@ -71,7 +72,7 @@ function SignIn() {
           </div>
           <Link to="/" className="text-right">Forgot password?</Link>
           <div className="w-auto mx-auto ext-center bg-red-500 text-white font-bold p-3 rounded-md cursor-pointer hover:bg-blue-300">
-            <button type="submit">Sign In</button>
+            <button type="submit" className="cursor-pointer">Sign In</button>
           </div>
         </div>
       </form>

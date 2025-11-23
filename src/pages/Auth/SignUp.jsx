@@ -53,18 +53,18 @@ function SignUp() {
         <div className="grid gap-5 p-5">
           <div>
             <label>Name</label>
-            <input type="text" name="name" value={data.name} onChange={handleOnChange} className="w-full h-10 bg-gray-100  rounded-md px-2" />
+            <input type="text" name="name" value={data.name} onChange={handleOnChange} className="w-full h-12 bg-gray-100  rounded-md px-2" />
           </div>
 
           <div>
             <label>Email</label>
-            <input type="email" name="email" value={data.email} onChange={handleOnChange} className="w-full h-10 bg-gray-100  rounded-md px-2" />
+            <input type="email" name="email" value={data.email} onChange={handleOnChange} className="w-full h-12 bg-gray-100  rounded-md px-2" />
           </div>
 
           <div>
             <label>Password</label>
             <div className="relative">
-              <input type={showPassword ? "text" : "password"} name="password" value={data.password} onChange={handleOnChange} className="w-full h-10 bg-gray-100  rounded-md px-2 pr-10"/>
+              <input type={showPassword ? "text" : "password"} name="password" value={data.password} onChange={handleOnChange} className="w-full h-12 bg-gray-100  rounded-md px-2 pr-10"/>
               <div className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer" onClick={()=>setShowPassword((preve)=>!preve)}>
 
                 {showPassword ?
@@ -79,7 +79,7 @@ function SignUp() {
           <div>
             <label>Confirm Password</label>
             <div className="relative">
-              <input type={showComfirmPassword ? "text" : "password"} name="confirm_password" value={data.confirm_password} onChange={handleOnChange} className="w-full h-10 bg-gray-100  rounded-md px-2"/>
+              <input type={showComfirmPassword ? "text" : "password"} name="confirm_password" value={data.confirm_password} onChange={handleOnChange} className="w-full h-12 bg-gray-100  rounded-md px-2"/>
               <div className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer" onClick={()=>setShowComfirmPassword((preve)=>!preve)}>
 
                   {showComfirmPassword ?
@@ -92,7 +92,7 @@ function SignUp() {
           </div>
 
           <div className="w-auto mx-auto ext-center bg-red-500 text-white font-bold p-3 rounded-md cursor-pointer hover:bg-blue-300">
-            <button type="submit">Sign Up</button>
+            <button type="submit" className="cursor-pointer">Sign Up</button>
           </div>
 
         </div>
