@@ -164,7 +164,7 @@ function UserList() {
                   <td className="px-4 py-3">
                     <button type="button" className="text-blue-600 mr-2 cursor-pointer" onClick={() => setEditingUser(user)}>Edit</button>
                     {editingUser && editedUserData && editingUser._id === user._id && (
-                      <div className="fixed inset-0  bg-opacity-50 flex justify-center items-center z-50">
+                      <div className="fixed inset-0 bg-gray-900/50 flex justify-center items-center z-50">
                         <div className="bg-white p-6 rounded-lg shadow-xl w-96">
                           <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-semibold">Edit User</h2>
@@ -184,7 +184,7 @@ function UserList() {
                                 <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
                                 <select name="role" id="role" value={editedUserData.role} onChange={handleEditFormChange} className="mt-1 p-2 border rounded-md w-full">
                                   <option value="">Select Role</option>
-                                  <option value="GENERAL">General</option>
+                                  <option value="General">General</option>
                                   <option value="Admin">Admin</option>
                                 </select>
                               </div>
@@ -193,7 +193,9 @@ function UserList() {
                                 <button type="button" onClick={() => setEditingUser(null)} className="px-4 py-2 bg-gray-200 rounded text-sm">
                                   Cancel
                                 </button>
-                                <button type="submit" onClick={handleUpdateUser} disabled={isUpdating} className="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 disabled:bg-blue-300">
+                                <button type="submit" onClick={handleUpdateUser} disabled={isUpdating} className="px-4 py-2 bg-blue-600 text120
+
+-white rounded text-sm hover:bg-blue-700 disabled:bg-blue-300">
                                   {isUpdating ? 'Saving...' : 'Save Changes'}
                                 </button>
                               </div>

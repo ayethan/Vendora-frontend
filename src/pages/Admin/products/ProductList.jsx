@@ -1,57 +1,140 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect, useCallback } from 'react';
+import ProductForm from './ProductForm';
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 
-const mapStateToProps = (state) => ({
-  products: state.products?.items || [],
-  loading: state.products?.loading || false,
-  error: state.products?.error || null,
-});
+function ProductList() {
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-const mapDispatchToProps = (dispatch) => ({
-  fetchProducts: () => dispatch({ type: 'PRODUCTS_FETCH_REQUEST' }),
-  removeProduct: (id) => dispatch({ type: 'PRODUCT_DELETE_REQUEST', payload: id }),
-});
+  const fetchProducts = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get('/products');
+      setProducts(response.data);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      toast.error("Failed to fetch products.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-function AdminProductList({ products, loading, error, fetchProducts, removeProduct }) {
-  const [query, setQuery] = useState('');
+  const handleCreateClick = () => {
+    setEditingProduct({});
+  };
+
+  const handleEditClick = (product) => {
+    setEditingProduct(product);
+  };
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
-  const filtered = useMemo(() => {
-    if (!query) return products;
-    const q = query.toLowerCase();
-    return products.filter((p) => (p.name || '').toLowerCase().includes(q));
-  }, [products, query]);
+  const handleCloseForm = () => {
+    setEditingProduct(null);
+  };
+
+  const handleFormSubmit = (productData) => {
+    console.log('Form submitted with data:', productData.id);
+    if (productData.id) {
+      axios.put(`/products-update/${productData.id}`, productData)
+        .then((response) => {
+          console.log(response.data);
+          toast.success("Product Updated Successfully");
+          handleCloseForm();
+          fetchProducts();
+        })
+        .catch(error => {
+          console.error('Error updating product:', error);
+          alert('Failed to update product.');
+        });
+    } else {
+      console.log('product create',productData);
+      axios.post('/products-create', productData)
+        .then((response) => {
+          console.log(response.data);
+          toast.success("Product Created Successfully");
+          handleCloseForm();
+          fetchProducts();
+        })
+        .catch(error => {
+          console.error('Error creating product:', error);
+          alert('Failed to create product.');
+        });
+    }
+  };
+
+  const handleDeleteClick = (productId) => {
+    axios.delete(`/products-delete/${productId}`)
+      .then((response) => {
+        console.log(response.data);
+        toast.success("Product Deleted Successfully");
+        fetchProducts();
+      })
+      .catch(error => {
+        console.error('Error deleting product:', error);
+        alert('Failed to delete product.');
+      });
+  }
 
   return (
-    <div>
-      <h2>Admin - Product List</h2>
-      <input
-        placeholder="Search products..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        style={{ marginBottom: 12, padding: 6, width: '100%' }}
+    <div className="h-screen p-6">
+      <ToastContainer />
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Product List</h1>
+        <button onClick={handleCreateClick} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Create</button>
+      </div>
+      <div className="overflow-auto bg-white rounded shadow">
+        <table className="min-w-full table-auto">
+          <thead className="bg-gray-100 text-left">
+            <tr>
+              <th className="px-4 py-2">ID</th>
+              <th className="px-4 py-2">Image</th>
+              <th className="px-4 py-2">Name</th>
+              <th className="px-4 py-2">Category</th>
+              <th className="px-4 py-2">Status</th>
+              <th className="px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td colSpan="4" className="text-center py-4">Loading products...</td>
+              </tr>
+            ) : products.length > 0 ? (
+              products.map((product, index) => (
+              <tr key={product._id} className="border-b">
+                  <td className="px-4 py-3">{index + 1}</td>
+                  <td className="px-4 py-3"><img src={product.featured_image} alt={product.name} width={50} height={50} /></td>
+                  <td className="px-4 py-3">{product.name}</td>
+                  <td className="px-4 py-3">{product.category === '1' ? 'Category 1' : 'Category 2'}</td>
+                  <td className="px-4 py-3"><span className={`py-1 px-3 rounded-full text-xs ${product.isActive === true ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'}`}>{product.isActive == true ? 'Active' : 'Inactive'}</span></td>
+                  <td className="px-4 py-3">
+                      <button type="button" className="text-blue-600 mr-2" onClick={() => handleEditClick(product)}>Edit</button>
+                      <button type="button" className="text-red-600" onClick={() => handleDeleteClick(product._id)}>Delete</button>
+                  </td>
+              </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="text-center py-4 text-gray-500">
+                  No products found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+      <ProductForm
+        product={editingProduct}
+        onSubmit={handleFormSubmit}
+        onClose={handleCloseForm}
       />
-      {loading ? (
-        <div>Loading...</div>
-      ) : error ? (
-        <div>{`Error: ${error}`}</div>
-      ) : (
-        <ul>
-          {filtered.map((p) => (
-            <li key={p.id || p._id || p.name}>
-              <span>{p.name || 'Unnamed'}</span>
-              <button onClick={() => removeProduct(p.id || p._id)} style={{ marginLeft: 8 }}>
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
-  );
+  )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AdminProductList);
+export default ProductList
