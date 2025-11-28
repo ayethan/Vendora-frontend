@@ -1,5 +1,5 @@
 import React from 'react'
-import {BrowserRouter, Route, Routes} from 'react-router-dom'
+import {BrowserRouter, Route, Routes, Navigate} from 'react-router-dom'
 import Home from '../pages/Home'
 import About from '../pages/About'
 import Product from '../pages/Product'
@@ -13,11 +13,14 @@ import DashboardHome from '../pages/Admin/DashboardHome'
 import ProductList from '../pages/Admin/products/ProductList'
 import OrderList from '../pages/Admin/orders/OrderList'
 import UserList from '../pages/Admin/users/UserList'
+import { useSelector } from 'react-redux'
 
-
-
-
+// ...existing code...
 function AllRoutes() {
+    const user = useSelector((state) => state.user.user)
+    const isAdmin = user?.role === 'Admin';
+    console.log('user in routes:', user);
+
   return (
     <BrowserRouter>
       <Navbar />
@@ -29,11 +32,15 @@ function AllRoutes() {
           <Route path='/card' element={<Card />} />
           <Route path='/signin' element={<SignIn />} />
           <Route path='/signup' element={<SignUp />} />
-          <Route path='/admin' element={<Dashboard />}>
-            <Route index element={<DashboardHome />} />
-            <Route path='users' element={<UserList />} />
-            <Route path='products' element={<ProductList />} />
-            <Route path='orders' element={<OrderList />} />
+
+          <Route
+            path='/admin'
+            element={isAdmin ? <Dashboard /> : <Navigate to='/' replace />}
+          >
+            <Route index element={isAdmin ? <DashboardHome /> : <Navigate to='/' replace />} />
+            <Route path='users' element={isAdmin ? <UserList /> : <Navigate to='/' replace />} />
+            <Route path='products' element={isAdmin ? <ProductList /> : <Navigate to='/' replace />} />
+            <Route path='orders' element={isAdmin ? <OrderList /> : <Navigate to='/' replace />} />
           </Route>
         </Routes>
     </BrowserRouter>
@@ -41,3 +48,4 @@ function AllRoutes() {
 }
 
 export default AllRoutes
+// ...existing code...

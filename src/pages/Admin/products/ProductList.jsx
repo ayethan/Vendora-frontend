@@ -11,7 +11,7 @@ function ProductList() {
   const fetchProducts = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get('/products');
+      const response = await axios.get('/products',{ withCredentials: true });
       setProducts(response.data);
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -40,7 +40,7 @@ function ProductList() {
   const handleFormSubmit = (productData) => {
     console.log('Form submitted with data:', productData.id);
     if (productData.id) {
-      axios.put(`/products-update/${productData.id}`, productData)
+      axios.put(`/products-update/${productData.id}`, productData, { withCredentials: true })
         .then((response) => {
           console.log(response.data);
           toast.success("Product Updated Successfully");
@@ -53,7 +53,7 @@ function ProductList() {
         });
     } else {
       console.log('product create',productData);
-      axios.post('/products-create', productData)
+      axios.post('/products-create', productData, { withCredentials: true })
         .then((response) => {
           console.log(response.data);
           toast.success("Product Created Successfully");
@@ -68,7 +68,7 @@ function ProductList() {
   };
 
   const handleDeleteClick = (productId) => {
-    axios.delete(`/products-delete/${productId}`)
+    axios.delete(`/products-delete/${productId}`, { withCredentials: true })
       .then((response) => {
         console.log(response.data);
         toast.success("Product Deleted Successfully");
