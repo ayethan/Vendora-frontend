@@ -35,6 +35,7 @@ function App() {
         <AllRoutes/>
       </AppContext.Provider>
 
+    // <AllRoutes/>
   )
 }
 

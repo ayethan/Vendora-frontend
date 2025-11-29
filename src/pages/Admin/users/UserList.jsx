@@ -130,6 +130,7 @@ function UserList() {
         <table className="min-w-full table-auto">
           <thead className="bg-gray-100 text-left">
             <tr>
+              <th className="px-4 py-2">ID</th>
               <th className="px-4 py-2">Name</th>
               <th className="px-4 py-2">Email</th>
               <th className="px-4 py-2">Role</th>
@@ -151,8 +152,9 @@ function UserList() {
                 </td>
               </tr>
             ) : (
-              filteredUsers.map(user => (
+              filteredUsers.map((user,index) => (
                 <tr key={user._id} className="border-t">
+                  <td className="px-4 py-3">{index + 1}</td>
                   <td className="px-4 py-3">{user.name}</td>
                   <td className="px-4 py-3 text-sm text-gray-600">{user.email}</td>
                   <td className="px-4 py-3">{user.role}</td>
