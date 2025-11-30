@@ -1,27 +1,36 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation, Autoplay } from "swiper/modules";
 import { FiCpu, FiShoppingBag, FiHome, FiBookOpen, FiSmile, FiAward, FiHeart, FiPlusSquare, FiCoffee, FiArchive, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 const categoriesData = [
-    { name: 'Electronics', icon: <FiCpu /> }, { name: 'Fashion', icon: <FiShoppingBag /> },
-    { name: 'Home', icon: <FiHome /> }, { name: 'Books', icon: <FiBookOpen /> },
-    { name: 'Toys', icon: <FiSmile /> }, { name: 'Sports', icon: <FiAward /> },
-    { name: 'Beauty', icon: <FiHeart /> }, { name: 'Health', icon: <FiPlusSquare /> },
-    { name: 'Food', icon: <FiCoffee /> }, { name: 'Furniture', icon: <FiArchive /> },
+    {id: 1, name: 'Electronics', icon: <FiCpu /> }, {id: 2, name: 'Fashion', icon: <FiShoppingBag /> },
+    {id: 3,name: 'Books', icon: <FiBookOpen /> },
+    {id: 4,name: 'Toys', icon: <FiSmile /> }, {id: 5,name: 'Sports', icon: <FiAward /> },
+    {id: 6,name: 'Beauty', icon: <FiHeart /> }, {id: 7, name: 'Health', icon: <FiPlusSquare /> },
+    {id: 8,name: 'Food', icon: <FiCoffee /> }, {id: 9, name: 'Furniture', icon: <FiArchive /> },
 ];
 
-const CategoryCard = ({ category }) => (
+const CategoryCard = ({ category, onCategoryClick }) => (
     <div className="bg-white p-4 rounded-lg shadow text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300
-    border border-gray-100 cursor-pointer flex flex-col justify-center items-center h-full">
-      <div className="h-16 w-16 mx-auto mb-3 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 text-3xl">
+    border border-gray-100 cursor-pointer flex flex-col justify-center items-center h-full"
+    onClick={() => onCategoryClick(category.id)}>
+      <div className="h-16 w-16 mx-auto mb-3 bg-indigo-100 rounded-full flex items-center justify-center text-red-500 text-3xl">
         {category.icon || category.name.charAt(0)}
       </div>
       <span className="text-sm font-medium text-gray-700">{category.name}</span>
     </div>
 );
 
-const FeaturedCategories = () => (
+const FeaturedCategories = () => {
+    const navigate = useNavigate();
+
+    const handleCategoryClick = (categoryName) => {
+        navigate(`/product?category=${categoryName}`);
+    };
+
+    return (
     <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 my-12 relative group">
       <h2 className="text-3xl font-bold text-gray-800 mb-8">Featured Categories</h2>
       <Swiper
@@ -43,8 +52,8 @@ const FeaturedCategories = () => (
         loop={true}
       >
         {categoriesData.map((category) => (
-          <SwiperSlide key={category.name}>
-            <CategoryCard category={category} />
+          <SwiperSlide key={category.id}>
+            <CategoryCard category={category} onCategoryClick={handleCategoryClick} />
           </SwiperSlide>
         ))}
       </Swiper>
@@ -58,5 +67,5 @@ const FeaturedCategories = () => (
       </button>
     </div>
 );
-
+}
 export default FeaturedCategories;

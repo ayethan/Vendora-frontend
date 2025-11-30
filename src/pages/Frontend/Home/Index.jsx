@@ -5,14 +5,14 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
-import HeroSlider from "./HeroSlider";
-import ValuePropositions from "./ValuePropositions";
-import FeaturedCategories from "./FeaturedCategories";
-import PromoSection from "./PromoSection";
-import FeaturedProducts from "./FeaturedProducts";
-import Testimonials from "./Testimonials";
-import BlogSection from "./BlogSection";
-import AnimatedSection from "./AnimatedSection";
+import HeroSlider from "./Components/HeroSlider";
+import ValuePropositions from "./Components/ValuePropositions";
+import FeaturedCategories from "./Components/FeaturedCategories";
+import PromoSection from "./Components/PromoSection";
+import FeaturedProducts from "./Components/FeaturedProducts";
+import Testimonials from "./Components/Testimonials";
+import BlogSection from "./Components/BlogSection";
+import AnimatedSection from "./Components/AnimatedSection";
 
 function Index() {
 

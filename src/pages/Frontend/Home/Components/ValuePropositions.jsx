@@ -15,8 +15,8 @@ const ValuePropositions = () => {
           <div className="grid grid-cols-2 gap-y-10 gap-x-6 md:grid-cols-4">
             {propositions.map((prop) => (
               <div key={prop.title} className="flex items-center sm:items-center">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white text-2xl">
+                <div className="flex-shrink-0 shadow-md p-1 rounded-md bg-gray-200 text-white">
+                  <div className="flex items-center justify-center h-12 w-12 rounded-md bg-white text-red-500 text-2xl">
                     {prop.icon}
                   </div>
                 </div>

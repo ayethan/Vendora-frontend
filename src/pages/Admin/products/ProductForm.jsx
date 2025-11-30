@@ -5,6 +5,15 @@ import uploadImage from '../../../helpers/uploadImage';
 import DisplayImage from './DisplayImage';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { FiBookOpen, FiCpu, FiSmile, FiHeart, FiCoffee, FiArchive, FiAward, FiPlusSquare, FiShoppingBag} from 'react-icons/fi';
+
+const categoriesData = [
+    {id: 1, name: 'Electronics', icon: <FiCpu /> }, {id: 2, name: 'Fashion', icon: <FiShoppingBag /> },
+    {id: 3,name: 'Books', icon: <FiBookOpen /> },
+    {id: 4,name: 'Toys', icon: <FiSmile /> }, {id: 5,name: 'Sports', icon: <FiAward /> },
+    {id: 6,name: 'Beauty', icon: <FiHeart /> }, {id: 7, name: 'Health', icon: <FiPlusSquare /> },
+    {id: 8,name: 'Food', icon: <FiCoffee /> }, {id: 9, name: 'Furniture', icon: <FiArchive /> },
+];
 
 function ProductForm({ product, onSubmit, onClose }) {
   const { register, handleSubmit, reset, control, setValue, watch, formState: { errors } } = useForm();
@@ -13,6 +22,8 @@ function ProductForm({ product, onSubmit, onClose }) {
 
   const [openFullScreenImage,setOpenFullScreenImage] = useState(false)
   const [fullScreenImage,setFullScreenImage] = useState("")
+  const [isUploadingFeaturedImage, setIsUploadingFeaturedImage] = useState(false); // New state for featured image upload
+
 
   useEffect(() => {
     console.log('product', product);
@@ -43,9 +54,16 @@ function ProductForm({ product, onSubmit, onClose }) {
   const handleFeaturedImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    const uploadImageCloudinary = await uploadImage(file);
-    setValue('featured_image', uploadImageCloudinary.url, { shouldValidate: true });
+    setIsUploadingFeaturedImage(true);
+    try {
+      const uploadImageCloudinary = await uploadImage(file);
+      setValue('featured_image', uploadImageCloudinary.url, { shouldValidate: true });
+    } catch (error) {
+      console.error('Error uploading featured image:', error);
+      // Handle error (e.g., show a notification)
+    } finally {
+      setIsUploadingFeaturedImage(false);
+    }
   }
 
   const handleUploadProduct = async (e) => {
@@ -57,8 +75,11 @@ function ProductForm({ product, onSubmit, onClose }) {
     setValue('image', [...currentImages, uploadImageCloudinary.url], { shouldValidate: true });
   }
 
+  const isSaveButtonDisabled = isUploadingFeaturedImage;
+
+
   return (
-        <div className='fixed w-full  h-full bg-gray-900/50 bg-opacity-35 top-0 left-0 right-0 bottom-0 flex justify-center items-center overflow-y-autofixed inset-0 bg-gray-900/50 z-50 flex items-start sm:items-center justify-center p-4 sm:p-6 overflow-y-auto'
+        <div key={product? product._id: ''} className='fixed w-full  h-full bg-gray-900/50 bg-opacity-35 top-0 left-0 right-0 bottom-0 flex justify-center items-center overflow-y-autofixed inset-0 bg-gray-900/50 z-50 flex items-start sm:items-center justify-center p-4 sm:p-6 overflow-y-auto'
         aria-modal="true" role="dialog" tabIndex="-1">
 
       <div className="bg-white p-4 sm:p-6 rounded-lg shadow-xl w-full max-w-lg sm:max-w-2xl mx-auto my-8 sm:my-0 max-h-[90vh] overflow-y-auto">
@@ -87,8 +108,11 @@ function ProductForm({ product, onSubmit, onClose }) {
               <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
               <select id="category" {...register("category", { required: "Category is required" })} className={`mt-1 p-2 border rounded-md w-full ${errors.category ? 'border-gray-500' : 'border-gray-200'}`}>
                 <option value="">Select Category</option>
-                <option value="1">Category 1</option>
-                <option value="2">Category 2</option>
+                {categoriesData.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
               </select>
               {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category.message}</p>}
             </div>
@@ -111,7 +135,7 @@ function ProductForm({ product, onSubmit, onClose }) {
                     render={({ field }) => (
                         <ReactQuill
                             theme="snow"
-                            value={field.value}
+                            value={field.value|| ''}
                             onChange={field.onChange}
                             className={`mt-1 border-gray-300 rounded ${errors.description ? 'border-gray-500' : 'border-gray-200'}`}
                         />
@@ -201,8 +225,8 @@ function ProductForm({ product, onSubmit, onClose }) {
             <button type="button" className="px-4 py-2 bg-gray-200 rounded text-sm cursor-pointer" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 cursor-pointer">
-              Save Changes
+            <button type="submit" disabled={isSaveButtonDisabled} className={`px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 ${isSaveButtonDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+              {isUploadingFeaturedImage ? 'Uploading...' : 'Save Changes'}
             </button>
           </div>
         </form>

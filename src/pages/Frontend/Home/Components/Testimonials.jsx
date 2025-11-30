@@ -6,7 +6,7 @@ import { FiStar, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 const testimonialsData = [
     {
         id: 1,
-        quote: "The quality is outstanding, and the customer service was top-notch. I'll definitely be shopping here again!",
+        quote: "The quality is outstanding, and the customer service was top-notch. I'll definitely be product-listping here again!",
         author: "Sarah L.",
         avatar: "https://randomuser.me/api/portraits/women/44.jpg"
     },

@@ -5,8 +5,8 @@ import { Pagination, Navigation, Autoplay } from "swiper/modules";
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 const slidesData = [
-    { id: 1, image: "/img/igor-bumba-rkaahInFlBg-unsplash.jpg", title: "Amazing Deals Daily", subtitle: "Don't miss out on our special offers.", cta: "Shop Deals", ctaLink: "/deals" },
-    { id: 2, image: "/img/gr-stocks-q8P8YoR6erg-unsplash.jpg", title: "Welcome to Vendora", subtitle: "Your one-stop shop for all your needs!", cta: "Explore Now", ctaLink: "/products" },
+    { id: 1, image: "/img/igor-bumba-rkaahInFlBg-unsplash.jpg", title: "Amazing Deals Daily", subtitle: "Don't miss out on our special offers.", cta: "product-list Deals", ctaLink: "/deals" },
+    { id: 2, image: "/img/gr-stocks-q8P8YoR6erg-unsplash.jpg", title: "Welcome to Vendora", subtitle: "Your one-stop product-list for all your needs!", cta: "Explore Now", ctaLink: "/products" },
     { id: 3, image: "/img/steven-lozano-m56XrhM9a_4-unsplash.jpg", title: "Discover Unique Products", subtitle: "Handpicked items just for you.", cta: "View Collection", ctaLink: "/collections/unique" },
     { id: 4, image: "/img/road-trip-with-raj-aa4sXii77zI-unsplash.jpg", title: "Fast Shipping", subtitle: "Get your products delivered in no time.", cta: "Learn More", ctaLink: "/shipping-info" },
 ];

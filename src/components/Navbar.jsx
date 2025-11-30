@@ -84,7 +84,7 @@ const Navbar = () => {
         <div className="flex items-center gap-4">
           <nav className="hidden md:flex items-center gap-4">
             <ul className="flex gap-7 items-center text-xl font-semibold">
-              <li><NavLink to="/" className={({ isActive }) => isActive ? 'text-red-500' : 'text-black'}>Home</NavLink></li>
+              {/* <li><NavLink to="/" className={({ isActive }) => isActive ? 'text-red-500' : 'text-black'}>Home</NavLink></li> */}
               <li><NavLink to="/product" className={({ isActive }) => isActive ? 'text-red-500' : 'text-black'}>Product</NavLink></li>
               <li><NavLink to="/about" className={({ isActive }) => isActive ? 'text-red-500' : 'text-black'}>About</NavLink></li>
               <li><NavLink to="/contact" className={({ isActive }) => isActive ? 'text-red-500' : 'text-black'}>Contact</NavLink></li>

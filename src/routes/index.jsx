@@ -2,7 +2,8 @@ import React from 'react'
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 import Home from '../pages/Frontend/Home/Index.jsx'
 import About from '../pages/About'
-import Product from '../pages/Product'
+import Product from '../pages/Frontend/Product/Index'
+import ProductDetail from '../pages/Frontend/Product/Detail' // New import
 import Contact from '../pages/Contact'
 import Card from '../pages/Card'
 import Navbar from '../components/Navbar'
@@ -31,6 +32,7 @@ function AllRoutes() {
                     <Route path='/about' element={<About />} />
                     <Route path='/contact' element={<Contact />} />
                     <Route path='/product' element={<Product />} />
+                    <Route path='/product/:id' element={<ProductDetail />} />
                     <Route path='/card' element={<Card />} />
                     <Route path='/signin' element={user?._id ? <Navigate to='/' replace /> : <SignIn />} />
                     <Route path='/signup' element={user?._id ? <Navigate to='/' replace /> : <SignUp />} />
