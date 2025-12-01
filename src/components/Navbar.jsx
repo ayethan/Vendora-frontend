@@ -11,11 +11,12 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const loction = false;
   const user = useSelector((state) => state.user.user)
+  const cart = useSelector((state) => state.user.cart)
   const userData = user;
   const [showUserCard, setShowUserCard] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const cardRef = useRef(null);
-
+  console.log("User Data in Navbar:", cart, user);
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (cardRef.current && !cardRef.current.contains(e.target)) {
@@ -93,8 +94,13 @@ const Navbar = () => {
 
           {/* Cart and User Icons */}
           <div className="flex items-center gap-4">
-            <Link to="/card" className="relative flex items-center gap-2 text-gray-700 hover:text-black">
+            <Link to="/cart" className="relative flex items-center gap-2 text-gray-700 hover:text-black">
               <ShoppingCart size={24} />
+              {user && cart.items.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {cart.items.reduce((acc, item) => acc + item.quantity, 0)}
+                </span>
+              )}
               <span className="sr-only">Cart</span>
             </Link>
             {userData && userData.name ? (
@@ -105,7 +111,9 @@ const Navbar = () => {
                 </button>
                 {showUserCard && (
                   <div className="absolute right-0 mt-2 w-44 bg-white rounded shadow-lg z-50">
-                    <Link to="/admin" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Admin Panel</Link>
+                    {userData && userData.role === 'Admin' && (
+                      <Link to="/admin" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Admin Panel</Link>
+                    )}
                     <Link to="/account" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Account</Link>
                     <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       Logout

@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
 import { FiEye, FiShoppingCart } from 'react-icons/fi';
 import ProductModel from'./ProductModel';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import { setCart } from '../store/userSlice';
+import axios from 'axios';
 
 const ProductCard = ({ product }) => {
   const [showModel, setShowModel] = useState(false);
+  const user = useSelector(state => state.user.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleModelOpen = () => {
     setShowModel(true);
@@ -14,7 +21,28 @@ const ProductCard = ({ product }) => {
     setShowModel(false);
   };
 
-
+  const handleAddToCart = async (e) => {
+    e.stopPropagation(); // prevent link navigation
+    if (!user) {
+      toast.error("Please login to add items to your cart.");
+      navigate('/signin');
+      return;
+    }
+    try {
+      const response = await axios.post('/cart/add',{
+        productId: product._id,
+        quantity: 1,
+        withCredentials: true
+      });
+      if (response.data.success) {
+        toast.success(response.data.message);
+        dispatch(setCart(response.data.cart));
+      }
+    } catch (error) {
+      toast.error("Failed to add to cart.");
+      console.error(error);
+    }
+  };
 
  return (
   <div className="bg-white rounded-sm overflow-hidden group hover:shadow-xl transition-shadow duration-300 relative" key={product._id}>
@@ -27,7 +55,7 @@ const ProductCard = ({ product }) => {
       <button onClick={handleModelOpen} className="bg-white text-indigo-600 p-3 rounded-full hover:bg-indigo-500 hover:text-white transition-colors cursor-pointer pointer-events-auto">
         <FiEye className="w-5 h-5" />
       </button>
-      <button className="bg-white text-indigo-600 p-3 rounded-full hover:bg-indigo-500 hover:text-white transition-colors cursor-pointer pointer-events-auto">
+      <button onClick={handleAddToCart} className="bg-white text-indigo-600 p-3 rounded-full hover:bg-indigo-500 hover:text-white transition-colors cursor-pointer pointer-events-auto">
         <FiShoppingCart className="w-5 h-5" />
       </button>
     </div>

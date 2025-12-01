@@ -39,6 +39,8 @@ function SignIn() {
         toast.success("Signed In Successfully");
         {user.role == "Admin" ? navigate("/admin") : navigate("/")  }
         fetchUserDetails();
+        window.location.reload();
+
       })
       .catch((error) => {
         console.error("There was an error!", error);

@@ -4,8 +4,10 @@ import Home from '../pages/Frontend/Home/Index.jsx'
 import About from '../pages/About'
 import Product from '../pages/Frontend/Product/Index'
 import ProductDetail from '../pages/Frontend/Product/Detail' // New import
+import Checkout from '../pages/Frontend/Checkout/Index.jsx' // New import
+import CheckoutSuccess from '../pages/Frontend/Checkout/Success.jsx' // New import
 import Contact from '../pages/Contact'
-import Card from '../pages/Card'
+import Cart from '../pages/Cart'
 import Navbar from '../components/Navbar'
 import SignIn from '../pages/Auth/SignIn'
 import SignUp from '../pages/Auth/SignUp'
@@ -33,7 +35,9 @@ function AllRoutes() {
                     <Route path='/contact' element={<Contact />} />
                     <Route path='/product' element={<Product />} />
                     <Route path='/product/:id' element={<ProductDetail />} />
-                    <Route path='/card' element={<Card />} />
+                    <Route path='/cart' element={<Cart />} />
+                    <Route path='/checkout' element={<Checkout />} />
+                    <Route path='/checkout-success' element={<CheckoutSuccess />} />
                     <Route path='/signin' element={user?._id ? <Navigate to='/' replace /> : <SignIn />} />
                     <Route path='/signup' element={user?._id ? <Navigate to='/' replace /> : <SignUp />} />
 
