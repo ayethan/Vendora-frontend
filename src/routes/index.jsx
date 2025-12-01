@@ -3,11 +3,11 @@ import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 import Home from '../pages/Frontend/Home/Index.jsx'
 import About from '../pages/About'
 import Product from '../pages/Frontend/Product/Index'
-import ProductDetail from '../pages/Frontend/Product/Detail' // New import
-import Checkout from '../pages/Frontend/Checkout/Index.jsx' // New import
-import CheckoutSuccess from '../pages/Frontend/Checkout/Success.jsx' // New import
+import ProductDetail from '../pages/Frontend/Product/Detail'
+import Checkout from '../pages/Frontend/Checkout/Index.jsx'
+import CheckoutSuccess from '../pages/Frontend/Checkout/Success.jsx'
 import Contact from '../pages/Contact'
-import Cart from '../pages/Cart'
+import Cart from '../pages/Frontend/Cart/Index.jsx'
 import Navbar from '../components/Navbar'
 import SignIn from '../pages/Auth/SignIn'
 import SignUp from '../pages/Auth/SignUp'

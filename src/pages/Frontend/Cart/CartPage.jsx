@@ -1,78 +1,9 @@
-// import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import React from 'react'
 import { FiTrash2, FiPlus, FiMinus } from 'react-icons/fi';
-import { toast } from 'react-toastify';
-import axios from 'axios';
-import { setCart } from '../store/userSlice';
+import { Link } from 'react-router-dom';
 
-const Cart = () => {
-  const navigate = useNavigate();
-  const { cart, user } = useSelector(state => state.user);
-  const dispatch = useDispatch();
-  const token = user?.token;
 
-  // const fetchCart = async () => {
-  //   try {
-  //     const response = await axios.get('/cart', {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`
-  //       }
-  //     });
-  //     if (response.data.success) {
-  //       dispatch(setCart(response.data.cart));
-  //     }
-  //   } catch (error) {
-  //     toast.error('Failed to fetch cart.');
-  //     console.error(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (token) {
-  //     fetchCart();
-  //   }
-  // }, [token]);
-
-  const handleUpdateQuantity = async (productId, quantity) => {
-    if (quantity < 1) return;
-    try {
-      const response = await axios.put(`/cart/update/${productId}`, { quantity }, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      if (response.data.success) {
-        dispatch(setCart(response.data.cart));
-      }
-    } catch (error) {
-      toast.error('Failed to update quantity.');
-      console.error(error);
-    }
-  };
-
-  const handleRemoveItem = async (productId) => {
-    try {
-      const response = await axios.delete(`/cart/remove/${productId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      if (response.data.success) {
-        toast.success(response.data.message);
-        dispatch(setCart(response.data.cart));
-      }
-    } catch (error) {
-      toast.error('Failed to remove item.');
-      console.error(error);
-    }
-  };
-
-  const calculateSubtotal = () => {
-    if (!cart || !cart.items) return '0.00';
-    return cart.items.reduce((acc, item) => acc + parseFloat(item.productId.price) * item.quantity, 0).toFixed(2);
-  };
-
+function CartPage({ cart, handleUpdateQuantity, handleRemoveItem, calculateSubtotal, navigate}) {
   return (
     <div className="container mx-auto p-4 my-8">
       <h1 className="text-3xl font-bold mb-6">Your Shopping Cart</h1>
@@ -134,7 +65,7 @@ const Cart = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Cart;
+export default CartPage
