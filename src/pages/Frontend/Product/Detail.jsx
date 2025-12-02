@@ -1,4 +1,3 @@
-// ...existing code...
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -113,7 +112,7 @@ function ProductDetail() {
       </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-x-6">
-        {/* Product Images */}
+
         <div className="flex flex-col items-center lg:col-span-2">
           <div className="main-image-container w-full max-w-full bg-white rounded-lg overflow-hidden shadow-sm">
             <img
@@ -207,4 +206,3 @@ function ProductDetail() {
 }
 
 export default ProductDetail;
-// ...existing code...

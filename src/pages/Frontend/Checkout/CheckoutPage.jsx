@@ -1,7 +1,7 @@
 import { CardElement, PaymentRequestButtonElement } from '@stripe/react-stripe-js'
-import React from 'react'
+import React, { memo } from 'react'
 
-function CheckoutPage({
+const CheckoutPage = memo(({
   user,
   cart,
   paymentRequest,
@@ -9,7 +9,7 @@ function CheckoutPage({
   loading,
   handleSubmit
 
-}) {
+}) =>{
 
   return (
     <div className="checkout-page">
@@ -146,6 +146,6 @@ function CheckoutPage({
       <p className="mt-4 text-center">This is the checkout page content.</p>
     </div>
   )
-}
+})
 
 export default CheckoutPage

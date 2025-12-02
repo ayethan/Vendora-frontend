@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo, useState } from 'react'
 import { Minus, Plus } from 'lucide-react';
 
 import {Collapse} from 'react-collapse';
@@ -10,11 +10,11 @@ const brandData = [
     {id: 4, name: 'Brand D' },
 ];
 
-function Sidebar({ categoriesData, onFilterChange, selectedCategories, selectedBrands }) {
-    const [isOpenCategory, setIsOpenCategory] = React.useState(true);
+const Sidebar = memo(({ categoriesData, onFilterChange, selectedCategories, selectedBrands }) => {
+    const [isOpenCategory, setIsOpenCategory] = useState(true);
     const toggleCategory = () => setIsOpenCategory(!isOpenCategory);
 
-    const [isOpenBrand, setIsOpenBrand] = React.useState(true);
+    const [isOpenBrand, setIsOpenBrand] = useState(true);
     const toggleBrand = () => setIsOpenBrand(!isOpenBrand);
 
     return (
@@ -92,6 +92,6 @@ function Sidebar({ categoriesData, onFilterChange, selectedCategories, selectedB
         </div>
       </div>
     )
-}
+});
 
-export default Sidebar
+export default Sidebar;

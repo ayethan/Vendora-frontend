@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { memo } from 'react';
 import ProductCard from '../../../../components/ProductCard';
 import Pagination from '../../../../components/Pagination';
 
 
-function CardList({ productsData, currentPage, totalPages, onPageChange, isLoading, setCurrentPage, sort, setSort }) {
+const CardList = memo(({ productsData, currentPage, totalPages, onPageChange, isLoading, setCurrentPage, sort, setSort }) => {
   console.log('CardList Props:', { productsData, currentPage, totalPages });
   const handleSortChange = (e) => {
     setSort(e.target.value);
@@ -52,6 +52,6 @@ function CardList({ productsData, currentPage, totalPages, onPageChange, isLoadi
       </div>
 
   )
-}
 
-export default CardList
+});
+export default CardList;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback} from 'react'
-  import { useLocation, useNavigate } from 'react-router-dom';import Sidebar from './Components/Sidebar';
+import { useLocation, useNavigate } from 'react-router-dom';import Sidebar from './Components/Sidebar';
 import CardList from './Components/CardList';
 import axios from 'axios';
 import { FiCpu, FiShoppingBag, FiBookOpen, FiSmile, FiAward, FiHeart, FiPlusSquare, FiCoffee, FiArchive} from 'react-icons/fi';
@@ -13,6 +13,7 @@ const categoriesData = [
     {id: 6,name: 'Beauty', icon: <FiHeart /> }, {id: 7, name: 'Health', icon: <FiPlusSquare /> },
     {id: 8,name: 'Food', icon: <FiCoffee /> }, {id: 9, name: 'Furniture', icon: <FiArchive /> },
 ];
+
 function Index() {
   const [productsData, setProductsData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,7 +30,7 @@ function Index() {
     const categoryIdParam = searchParams.get('category');
     if (categoryIdParam) {
       const categoryId = parseInt(categoryIdParam, 10);
-      // Check if it's a valid number and potentially if it exists in categoriesData
+
       if (!isNaN(categoryId)) {
         setFilters(prevFilters => ({ ...prevFilters, category: [categoryId] }));
       }

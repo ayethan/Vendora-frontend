@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
@@ -42,7 +42,6 @@ const Checkout = () => {
         ],
       });
 
-      // Check the availability of the Payment Request API.
       pr.canMakePayment().then(result => {
         if (result) {
           setPaymentRequest(pr);
@@ -82,7 +81,7 @@ const Checkout = () => {
     }
   }, [stripe, elements, cart]);
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = useCallback(async (event) => {
     event.preventDefault();
     setLoading(true);
 
@@ -104,7 +103,7 @@ const Checkout = () => {
     } else {
       try {
         const response = await axios.post('/create-checkout-session', {
-          amount: 1000.00,
+          amount: cart?.total || 0,
           currency: 'usd',
           paymentMethodId: paymentMethod.id,
           userId: user._id,
@@ -127,7 +126,7 @@ const Checkout = () => {
       }
       setLoading(false);
     }
-  };
+  }, [stripe, elements, cart, user, dispatch, navigate]);
 
   return (
     <CheckoutPage
