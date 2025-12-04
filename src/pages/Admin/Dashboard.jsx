@@ -1,7 +1,15 @@
-import { Link, Outlet, useLocation } from 'react-router-dom'
+import React from 'react';
+// import { useSelector } from 'react-redux';
+import { Link, Outlet, useLocation, Navigate } from 'react-router-dom';
 
 function Dashboard() {
   const location = useLocation();
+  // const user = useSelector((state) => state.user.user);
+  // const isAdmin = user?.role === 'Admin';
+
+  // if (!isAdmin) {
+  //   return <Navigate to="/" replace />;
+  // }
 
   return (
     <div className="h-screen flex shadow-sm mx-auto overflow-hidden">

@@ -1,5 +1,4 @@
-// import { useState } from 'react'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css'
 import AllRoutes from './routes/index.jsx';
 import axios from 'axios';
@@ -20,8 +19,9 @@ axios.defaults.withCredentials = true;
 
 function App() {
   const dispatch = useDispatch();
-  const {user } = useSelector(state => state.user);
+  const { user } = useSelector(state => state.user);
   const token = user?.token;
+  const [loading, setLoading] = useState(true);
 
   const fetchCart = async () => {
     try {
@@ -39,13 +39,17 @@ function App() {
   };
 
   const fetchUserDetails = async() => {
-    const resData = await axios.get("/user-details", { withCredentials: true });
+    try {
+      const resData = await axios.get("/user-details", { withCredentials: true });
 
-    const dataApi = resData.data;
-    if(dataApi.success){
-      dispatch(setUserDetails(dataApi?.data));
-    }else{
-      console.error("Failed to fetch user details");
+      const dataApi = resData.data;
+      if(dataApi.success){
+        dispatch(setUserDetails(dataApi?.data));
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -53,10 +57,22 @@ function App() {
 
   useEffect(() => {
     fetchUserDetails();
-    fetchCart();
-    // if (token) {
-    // }
   }, []);
+
+  useEffect(() => {
+    if (token) {
+      fetchCart();
+    }
+  }, [token]);
+
+
+  if (loading) {
+    return (
+      <div className='flex justify-center items-center w-full h-screen bg-transparent'>
+        Loading...
+      </div>
+    );
+  }
 
 
   return (

@@ -19,10 +19,10 @@ import UserList from '../pages/Admin/users/UserList'
 import { useSelector } from 'react-redux'
 import Footer from '../components/Footer'
 
+// import AdminRoute from './AdminRoute';
+
 function AllRoutes() {
     const user = useSelector((state) => state.user.user)
-    const isAdmin = user?.role === 'Admin';
-    console.log('user in routes:', user);
 
     return (
         <BrowserRouter>
@@ -41,12 +41,16 @@ function AllRoutes() {
                     <Route path='/signin' element={user?._id ? <Navigate to='/' replace /> : <SignIn />} />
                     <Route path='/signup' element={user?._id ? <Navigate to='/' replace /> : <SignUp />} />
 
-                    <Route path='/admin' element={isAdmin ? <Dashboard /> : <Navigate to="/signin" replace />}>
-                        <Route index element={<DashboardHome />} />
-                        <Route path='users' element={<UserList />} />
-                        <Route path='products' element={<ProductList />} />
-                        <Route path='orders' element={<OrderList />} />
-                    </Route>
+                    {/* <Route element={<AdminRoute />}> */}
+                    {user && user.role === 'Admin' &&
+                        <Route path='/admin' element={<Dashboard />}>
+                            <Route index element={<DashboardHome />} />
+                            <Route path='users' element={<UserList />} />
+                            <Route path='products' element={<ProductList />} />
+                            <Route path='orders' element={<OrderList />} />
+                        </Route>
+                    }
+                    {/* </Route> */}
                 </Routes>
             </main>
             <Footer />

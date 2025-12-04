@@ -9,7 +9,6 @@ const initialState = {
 }
 export const userSlice = createSlice({
   name: 'user',
-  cart: 'cart',
   initialState,
   reducers: {
     setUserDetails: (state, action) => {

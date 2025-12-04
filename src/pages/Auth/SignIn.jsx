@@ -16,7 +16,7 @@ function SignIn() {
 
   const navigate = useNavigate();
 
-  const {fetchUserDetails} = useContext(AppContext);
+  const {fetchUserDetails, fetchCart} = useContext(AppContext);
 
   const handleOnChange = (e) =>{
         const { name , value } = e.target
@@ -34,12 +34,12 @@ function SignIn() {
     e.preventDefault();
     axios.post("/signin", data, { withCredentials: true })
       .then((response) => {
-        console.log(response.data);
         const user = response.data.data
         toast.success("Signed In Successfully");
-        {user.role == "Admin" ? navigate("/admin") : navigate("/")  }
         fetchUserDetails();
-        window.location.reload();
+        fetchCart();
+        console.log("User after sign in:", user.role == "Admin");
+        {user.role == "Admin" ? navigate("/admin") : navigate("/")  }
 
       })
       .catch((error) => {
@@ -72,13 +72,17 @@ function SignIn() {
                 </div>
               </div>
             </div>
-            <Link to="/" className="text-right">Forgot password?</Link>
-            <div className="w-auto mx-auto ext-center bg-red-500 text-white font-bold p-3 rounded-md cursor-pointer hover:bg-blue-300">
-              <button type="submit" className="cursor-pointer">Sign In</button>
+            <div className="text-right text-red-600 hover:underline">
+              <Link to="/">Forgot password?</Link>
+            </div>
+            <div className="w-full text-center bg-red-600 text-white font-bold py-3 rounded-md cursor-pointer hover:bg-red-300">
+              <button type="submit" className="cursor-pointer w-full h-full">Sign In</button>
             </div>
           </div>
         </form>
-        <Link to="/signup" className="text-center pb-5 block">Don't have an account? Sign Up</Link>
+        <div className="text-center pb-5 block text-red-600 hover:underline">
+          <Link to="/signup">Don't have an account? Sign Up</Link>
+        </div>
       </div>
   )
 }
