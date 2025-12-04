@@ -4,7 +4,6 @@ import { Navigate, Outlet } from 'react-router-dom';
 
 const AdminRoute = () => {
     const { user, status } = useSelector((state) => state.user);
-    console.log("AdminRoute - user:", user, "status:", status, "isAdmin:", user?.role === 'Admin'); // Debug log
     const isAdmin = user?.role === 'Admin';
 
     if (status === 'loading') {

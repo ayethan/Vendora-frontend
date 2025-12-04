@@ -117,7 +117,7 @@ const Checkout = () => {
         if (response.data.success) {
           toast.success('Payment successful!');
           dispatch(setCart({ items: [], total: 0 }));
-          navigate('/checkout-success'); // Redirect to success page
+          navigate('/checkout-success');
         } else {
           toast.error(response.data.message);
         }

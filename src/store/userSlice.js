@@ -64,7 +64,7 @@ export const userSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
         console.error("fetchUserDetails rejected:", action.error.message);
-        state.user = null; // Clear user on rejection
+        state.user = null;
       })
       .addCase(fetchCart.fulfilled, (state, action) => {
         if (action.payload) {
@@ -74,7 +74,7 @@ export const userSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.cart = { items: [] };
-        state.status = "succeeded"; // Changed from "idle" to "succeeded"
+        state.status = "succeeded";
       });
   },
 });

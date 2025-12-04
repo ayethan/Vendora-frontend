@@ -84,7 +84,6 @@ function Index() {
 
       const updatedFilters = { ...prevFilters, [filterType]: newValues };
 
-      // Update URL
       const searchParams = new URLSearchParams();
       if (updatedFilters.category.length > 0) {
         searchParams.append('category', updatedFilters.category.join(','));

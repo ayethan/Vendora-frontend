@@ -89,7 +89,6 @@ const CheckoutPage = memo(({
           </div>
         </div>
 
-        {/* Right Column: Order Summary and Payment */}
         <div className="md:w-2/5">
           {/* Order Summary */}
           <div className="bg-white p-8 rounded-lg shadow-lg mb-6">
