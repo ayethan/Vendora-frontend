@@ -4,7 +4,7 @@ import { React, useState, useEffect, useRef } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { logout } from '../store/userSlice';
+import { logoutUser } from '../store/userSlice';
 import { toast } from 'react-toastify';
 
 const Navbar = () => {
@@ -61,15 +61,11 @@ const Navbar = () => {
 
   const handleLogout = async() => {
     try {
-      const response = await axios.get('/signout', { withCredentials: true }); //use get method
-
-      if (response.data.success) {
-        dispatch(logout());
-        navigate("/signin");
-        toast.success("Logout successful!");
-      }
+      await dispatch(logoutUser());
+      navigate("/signin");
+      toast.success("Logout successful!");
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Logout failed.");
+      toast.error(error?.message || "Logout failed.");
       console.error("Logout error:", error);
     }
   };

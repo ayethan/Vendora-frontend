@@ -31,7 +31,6 @@ const teamMembers = [
 const About = () => {
   return (
     <div className="bg-gray-50 text-gray-800">
-      {/* Hero Section */}
       <div className="bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
           <Building className="mx-auto h-16 w-16 text-red-500 mb-4" />
@@ -44,7 +43,6 @@ const About = () => {
         </div>
       </div>
 
-      {/* Our Mission & Story Section */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div className="p-8 bg-white rounded-xl shadow-md">
@@ -68,7 +66,6 @@ const About = () => {
         </div>
       </div>
 
-      {/* Meet the Team Section */}
       <div className="bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center mb-12">
@@ -100,7 +97,6 @@ const About = () => {
         </div>
       </div>
 
-      {/* Call to Action Section */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="bg-blue-600 rounded-2xl shadow-xl text-white text-center p-12">
           <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">Ready to Start Shopping?</h2>

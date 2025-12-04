@@ -1,10 +1,11 @@
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import AppContext from '../../context';
+import { useDispatch } from 'react-redux';
+import { fetchUserDetails, fetchCart } from '../../store/userSlice.js';
+import userService from '../../services/user.js';
 
 function SignIn() {
 
@@ -15,8 +16,7 @@ function SignIn() {
     })
 
   const navigate = useNavigate();
-
-  const {fetchUserDetails, fetchCart} = useContext(AppContext);
+  const dispatch = useDispatch();
 
   const handleOnChange = (e) =>{
         const { name , value } = e.target
@@ -30,22 +30,20 @@ function SignIn() {
     }
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post("/signin", data, { withCredentials: true })
-      .then((response) => {
-        const user = response.data.data
-        toast.success("Signed In Successfully");
-        fetchUserDetails();
-        fetchCart();
-        console.log("User after sign in:", user.role == "Admin");
-        {user.role == "Admin" ? navigate("/admin") : navigate("/")  }
-
-      })
-      .catch((error) => {
-        console.error("There was an error!", error);
-        toast.error(error.response?.data?.message || "Sign In Failed");
-      });
+    try {
+      const response = await userService.signIn(data);
+      const user = response.data;
+      toast.success("Signed In Successfully");
+      dispatch(fetchUserDetails());
+      dispatch(fetchCart());
+      console.log("User after sign in:", user.role == "Admin");
+      {user.role == "Admin" ? navigate("/admin") : navigate("/")  }
+    } catch (error) {
+      console.error("There was an error!", error);
+      toast.error(error.response?.data?.message || "Sign In Failed");
+    }
   }
 
   return (

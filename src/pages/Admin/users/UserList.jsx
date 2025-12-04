@@ -40,7 +40,6 @@ function UserList() {
     let isMounted = true;
     fetchAllUsers(isMounted);
 
-    // 💡 Cleanup function: This runs when the component unmounts
     return () => {
       isMounted = false;
     };
@@ -67,8 +66,8 @@ function UserList() {
       const response = await axios.put(`/update-user/${editedUserData._id}`, editedUserData, { withCredentials: true });
       if (response.data.success) {
         toast.success('User updated successfully');
-        setEditingUser(null); // Close the modal
-        // Refresh the user list to show the updated data
+        setEditingUser(null);
+
         setUsers(prevUsers => prevUsers.map(user =>
           user._id === editedUserData._id ? { ...user, ...editedUserData } : user
         ));

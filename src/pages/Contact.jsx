@@ -16,16 +16,13 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here you would typically handle form submission, e.g., send to an API
     console.log('Form submitted:', formState);
     alert('Thank you for your message! We will get back to you soon.');
-    // Reset form
     setFormState({ name: '', email: '', subject: '', message: '' });
   };
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900">Get in Touch</h1>
@@ -35,11 +32,9 @@ const Contact = () => {
         </div>
       </div>
 
-      {/* Contact Info & Form Section */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          
-          {/* Contact Information */}
+
           <div className="space-y-8 lg:col-span-1">
             <div className="flex items-start">
               <div className="flex-shrink-0 h-12 w-12 flex items-center justify-center bg-blue-500 text-white rounded-lg">
@@ -72,7 +67,6 @@ const Contact = () => {
             </div>
           </div>
 
-          {/* Contact Form */}
           <div className="lg:col-span-2 bg-white p-8 rounded-2xl shadow-lg">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -100,8 +94,7 @@ const Contact = () => {
           </div>
         </div>
       </div>
-      
-      {/* Map Section */}
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <div className="h-96 bg-white rounded-2xl shadow-lg overflow-hidden">
           <iframe

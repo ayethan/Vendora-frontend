@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import ProductForm from './ProductForm';
-import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
+import ProductFormModal from './ProductFormModal';
+import productService from '../../../services/product';
+import { toast } from 'react-toastify';
 
 function ProductList() {
   const [editingProduct, setEditingProduct] = useState(null);
@@ -11,8 +11,8 @@ function ProductList() {
   const fetchProducts = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get('/products',{ withCredentials: true });
-      setProducts(response.data);
+      const data = await productService.getProducts();
+      setProducts(data);
     } catch (error) {
       console.error('Error fetching products:', error);
       toast.error("Failed to fetch products.");
@@ -37,52 +37,36 @@ function ProductList() {
     setEditingProduct(null);
   };
 
-  const handleFormSubmit = (productData) => {
-    console.log('Form submitted with data:', productData.id);
-    if (productData.id) {
-      axios.put(`/products-update/${productData.id}`, productData, { withCredentials: true })
-        .then((response) => {
-          console.log(response.data);
-          toast.success("Product Updated Successfully");
-          handleCloseForm();
-          fetchProducts();
-        })
-        .catch(error => {
-          console.error('Error updating product:', error);
-          alert('Failed to update product.');
-        });
-    } else {
-      console.log('product create',productData);
-      axios.post('/products-create', productData, { withCredentials: true })
-        .then((response) => {
-          console.log(response.data);
-          toast.success("Product Created Successfully");
-          handleCloseForm();
-          fetchProducts();
-        })
-        .catch(error => {
-          console.error('Error creating product:', error);
-          alert('Failed to create product.');
-        });
+  const handleFormSubmit = async (productData) => {
+    try {
+      if (productData.id) {
+        await productService.updateProduct(productData);
+        toast.success("Product Updated Successfully");
+      } else {
+        await productService.createProduct(productData);
+        toast.success("Product Created Successfully");
+      }
+      handleCloseForm();
+      fetchProducts();
+    } catch (error) {
+      console.error('Error saving product:', error);
+      toast.error('Failed to save product.');
     }
   };
 
-  const handleDeleteClick = (productId) => {
-    axios.delete(`/products-delete/${productId}`, { withCredentials: true })
-      .then((response) => {
-        console.log(response.data);
-        toast.success("Product Deleted Successfully");
-        fetchProducts();
-      })
-      .catch(error => {
-        console.error('Error deleting product:', error);
-        alert('Failed to delete product.');
-      });
-  }
+  const handleDeleteClick = async (productId) => {
+    try {
+      await productService.deleteProduct(productId);
+      toast.success("Product Deleted Successfully");
+      fetchProducts();
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      toast.error('Failed to delete product.');
+    }
+  };
 
   return (
     <div className="h-screen p-6">
-      <ToastContainer />
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Product List</h1>
         <button onClick={handleCreateClick} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Create</button>
@@ -128,7 +112,7 @@ function ProductList() {
           </tbody>
         </table>
       </div>
-      <ProductForm
+      <ProductFormModal
         product={editingProduct}
         onSubmit={handleFormSubmit}
         onClose={handleCloseForm}

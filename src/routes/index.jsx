@@ -19,7 +19,7 @@ import UserList from '../pages/Admin/users/UserList'
 import { useSelector } from 'react-redux'
 import Footer from '../components/Footer'
 
-// import AdminRoute from './AdminRoute';
+import AdminRoute from './AdminRoute';
 
 function AllRoutes() {
     const user = useSelector((state) => state.user.user)
@@ -41,16 +41,14 @@ function AllRoutes() {
                     <Route path='/signin' element={user?._id ? <Navigate to='/' replace /> : <SignIn />} />
                     <Route path='/signup' element={user?._id ? <Navigate to='/' replace /> : <SignUp />} />
 
-                    {/* <Route element={<AdminRoute />}> */}
-                    {user && user.role === 'Admin' &&
+                    <Route element={<AdminRoute />}>
                         <Route path='/admin' element={<Dashboard />}>
                             <Route index element={<DashboardHome />} />
                             <Route path='users' element={<UserList />} />
                             <Route path='products' element={<ProductList />} />
                             <Route path='orders' element={<OrderList />} />
                         </Route>
-                    }
-                    {/* </Route> */}
+                    </Route>
                 </Routes>
             </main>
             <Footer />

@@ -1,9 +1,9 @@
-import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 import {React, useState} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import userService from '../../services/user.js';
 
 function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -32,24 +32,21 @@ function SignUp() {
             }
         })
     }
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if(data.password !== data.confirm_password){
-      toast.error("Password and Confirm Password do not match");
-      console.log("Password and Confirm Password do not match");
-      return;
-    }
-    axios.post("/signup", data)
-      .then((response) => {
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      if(data.password !== data.confirm_password){
+        toast.error("Password and Confirm Password do not match");
+        console.log("Password and Confirm Password do not match");
+        return;
+      }
+      try {
+        const response = await userService.signUp(data);
         toast.success(response.data.message);
         navigate("/signin");
-      })
-      .catch((error) => {
-        // console.error("There was an error!", error);
-        toast.error(error.response.data.message);
-      });
-
-  }
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Sign Up Failed");
+      }
+    }
   return (
     <div className="max-w-200 mx-auto m-25 bg-white shadow-2xl">
       <ToastContainer />
