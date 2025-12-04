@@ -15,17 +15,47 @@ const Navbar = () => {
   const userData = user;
   const [showUserCard, setShowUserCard] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
   const cardRef = useRef(null);
+  const searchRef = useRef(null);
   console.log("User Data in Navbar:", cart, user);
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (cardRef.current && !cardRef.current.contains(e.target)) {
         setShowUserCard(false);
       }
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setSuggestions([]);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    const handler = setTimeout(async () => {
+      if (searchTerm) {
+        setLoading(true);
+        try {
+          const response = await axios.get(`/search?q=${searchTerm}`);
+          setSuggestions(response.data);
+        } catch (error) {
+          console.error("Error fetching search results:", error);
+          setSuggestions([]);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setSuggestions([]);
+      }
+    }, 300); // 300ms debounce
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm]);
 
   const navigate = useNavigate();
 
@@ -63,20 +93,39 @@ const Navbar = () => {
         <div className="w-2xl hidden md:flex items-center gap-8">
 
           {/* Search Section */}
-          <div className="flex max-w-auto flex-1">
-            <div className="w-full flex border border-gray-300 rounded-md overflow-hidden">
+          <div className="flex max-w-auto flex-1" ref={searchRef}>
+            <div className="w-full flex border border-gray-300 rounded-md relative">
               <input
                 type="text"
                 placeholder="Search for products, brands and more"
                 className="flex-1 px-4 py-3 focus:outline-none"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
               <Search className="mt-3 mr-5"/>
-              {/* <button className="bg-red-500 px-4 flex items-center justify-center text-white">
-                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <circle cx="11" cy="11" r="8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button> */}
+              {console.log('suggestion',suggestions.length > 0)}
+              {suggestions.length > 0 && (
+                <ul className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-b-md shadow-lg z-10">
+                  {loading ? (
+                    <li className="px-4 py-2 text-gray-500">Loading...</li>
+                  ) : (
+                    suggestions.map((product) => (
+                      <li key={product._id}>
+                        <Link
+                          to={`/product/${product._id}`}
+                          className="block px-4 py-2 hover:bg-gray-200"
+                          onClick={() => {
+                            setSearchTerm('');
+                            setSuggestions([]);
+                          }}
+                        >
+                          {product.name}
+                        </Link>
+                      </li>
+                    ))
+                  )}
+                </ul>
+              )}
             </div>
           </div>
         </div>

@@ -5,9 +5,7 @@ import axios from 'axios';
 const FeaturedProducts = () => {
   const [productsData, setProductsData] = useState([]);
   useEffect(() => {
-      // Fetch products from an API or data source
-      // For demonstration, we are using static data
-      axios.get('/featured-products') // Example API endpoint
+      axios.get('/featured-products')
         .then(response => {
           setProductsData(response.data);
         })
@@ -15,7 +13,6 @@ const FeaturedProducts = () => {
           console.error('Error fetching products:', error);
         });
 
-      // For now, using static data
       // setProductsData(productsData);
     }, []);
 
