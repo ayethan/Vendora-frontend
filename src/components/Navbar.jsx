@@ -20,7 +20,7 @@ const Navbar = () => {
   const [loading, setLoading] = useState(false);
   const cardRef = useRef(null);
   const searchRef = useRef(null);
-  console.log("User Data in Navbar:", cart, user);
+  // console.log("User Data in Navbar:", cart, user);
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (cardRef.current && !cardRef.current.contains(e.target)) {
@@ -113,7 +113,7 @@ const Navbar = () => {
                       <li key={product._id}>
                         <Link
                           to={`/product/${product._id}`}
-                          className="block px-4 py-2 hover:bg-gray-200"
+                          className="block px-4 py-2 hover:bg-gray-100"
                           onClick={() => {
                             setSearchTerm('');
                             setSuggestions([]);
