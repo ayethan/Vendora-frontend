@@ -43,6 +43,16 @@ const CheckoutPage = memo(({
                   />
                 </div>
                 <div>
+                  <label htmlFor="userPhone" className="block text-gray-700 text-sm font-medium mb-1">Phone:</label>
+                  <input
+                    id="userPhone"
+                    type="text"
+                    value={user.phone || ''}
+                    readOnly
+                    className="p-3 border border-gray-300 rounded-md bg-gray-100 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ease-in-out"
+                  />
+                </div>
+                <div>
                   <label htmlFor="userAddress" className="block text-gray-700 text-sm font-medium mb-1">Address:</label>
                   <input
                     id="userAddress"
@@ -72,16 +82,7 @@ const CheckoutPage = memo(({
                     className="p-3 border border-gray-300 rounded-md bg-gray-100 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ease-in-out"
                   />
                 </div>
-                <div>
-                  <label htmlFor="userPhone" className="block text-gray-700 text-sm font-medium mb-1">Phone:</label>
-                  <input
-                    id="userPhone"
-                    type="text"
-                    value={user.phone || ''}
-                    readOnly
-                    className="p-3 border border-gray-300 rounded-md bg-gray-100 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ease-in-out"
-                  />
-                </div>
+
               </div>
             )}
             {!user && <p className="text-gray-600">Please sign in to view your shipping information.</p>}
