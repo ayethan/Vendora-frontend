@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, Navigate, Outlet } from 'react-router-dom'
 import Home from '../pages/Frontend/Home/Index.jsx'
 import About from '../pages/About'
 import Product from '../pages/Frontend/Product/Index'
@@ -18,18 +18,42 @@ import OrderList from '../pages/Admin/orders/OrderList'
 import UserList from '../pages/Admin/users/UserList'
 import { useSelector } from 'react-redux'
 import Footer from '../components/Footer'
+import AdminHeader from '../pages/Admin/layouts/Header'
+import AdminFooter from '../pages/Admin/layouts/Footer'
 
 import AdminRoute from './AdminRoute';
+
+
+
+
+const PublicLayout = () => (
+    <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-1">
+            <Outlet />
+        </main>
+        <Footer />
+    </div>
+);
+
+const AdminLayout = () => (
+    <div className="min-h-screen flex flex-col">
+        <AdminHeader />
+        <main className="flex-1">
+            <Outlet />
+        </main>
+        <AdminFooter />
+    </div>
+);
 
 function AllRoutes() {
     const user = useSelector((state) => state.user.user)
 
     return (
         <BrowserRouter>
-        <div className="min-h-screen flex flex-col">
-            <Navbar />
-            <main className="flex-1">
-                <Routes>
+            <Routes>
+                {/* Public Routes */}
+                <Route element={<PublicLayout />}>
                     <Route path='/' element={<Home />} />
                     <Route path='/about' element={<About />} />
                     <Route path='/contact' element={<Contact />} />
@@ -40,7 +64,11 @@ function AllRoutes() {
                     <Route path='/checkout-success' element={<CheckoutSuccess />} />
                     <Route path='/signin' element={user?._id ? <Navigate to='/' replace /> : <SignIn />} />
                     <Route path='/signup' element={user?._id ? <Navigate to='/' replace /> : <SignUp />} />
+                </Route>
 
+
+                {/* Admin Routes */}
+                <Route element={<AdminLayout />}>
                     <Route element={<AdminRoute />}>
                         <Route path='/admin' element={<Dashboard />}>
                             <Route index element={<DashboardHome />} />
@@ -49,10 +77,8 @@ function AllRoutes() {
                             <Route path='orders' element={<OrderList />} />
                         </Route>
                     </Route>
-                </Routes>
-            </main>
-            <Footer />
-        </div>
+                </Route>
+            </Routes>
         </BrowserRouter>
     )
 }

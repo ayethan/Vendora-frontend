@@ -66,12 +66,12 @@ function ProductList() {
   };
 
   return (
-    <div className="h-screen p-6">
+    <div className="p-6">
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Product List</h1>
         <button onClick={handleCreateClick} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Create</button>
       </div>
-      <div className="overflow-auto bg-white rounded shadow">
+      <div className="overflow-x-auto bg-white rounded shadow">
         <table className="min-w-full table-auto">
           <thead className="bg-gray-100 text-left">
             <tr>
