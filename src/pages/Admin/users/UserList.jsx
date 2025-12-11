@@ -82,23 +82,23 @@ function UserList() {
     }
   }
 
-  const filteredUsers = React.useMemo(() => {
-    const q = query.trim().toLowerCase()
-    return users?.filter(u => {
-      if (onlyActive && !u.active) return false
-      if (!q) return true
-      return (
-        u.name?.toLowerCase().includes(q) ||
-        u.email?.toLowerCase().includes(q) ||
-        u.role?.toLowerCase().includes(q)
-      )
-    })
-  }, [query, onlyActive, users])
+  // const filteredUsers = React.useMemo(() => {
+  //   const q = query.trim().toLowerCase()
+  //   return users?.filter(u => {
+  //     if (onlyActive && !u.active) return false
+  //     if (!q) return true
+  //     return (
+  //       u.name?.toLowerCase().includes(q) ||
+  //       u.email?.toLowerCase().includes(q) ||
+  //       u.role?.toLowerCase().includes(q)
+  //     )
+  //   })
+  // }, [query, onlyActive, users])
 
   return (
     <UserTable
       isLoading={isLoading}
-      filteredUsers={filteredUsers}
+      filteredUsers={users}
       query={query}
       setQuery={setQuery}
       onlyActive={onlyActive}

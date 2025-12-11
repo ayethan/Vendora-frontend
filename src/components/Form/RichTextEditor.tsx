@@ -3,7 +3,14 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Controller } from 'react-hook-form';
 
-const RichTextEditor = ({ control, name, errors }) => (
+interface RichTextEditorProps {
+  control: any;
+  name: string;
+  errors: any;
+}
+
+
+const RichTextEditor: React.FC<RichTextEditorProps> = ({ control, name, errors }) => (
   <div>
     <label htmlFor={name} className="block text-sm font-medium text-gray-700">Description</label>
     <Controller

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ProductFormModal from './ProductFormModal';
 import productService from '../../../services/product';
+import { DataTable } from "../../../components/ui/data-table.js";
+import { createProductColumns } from "./ProductColumns.js";
 import { toast } from 'react-toastify';
 
 function ProductList() {
@@ -65,53 +67,29 @@ function ProductList() {
     }
   };
 
+  const columns = createProductColumns({
+    onEdit: handleEditClick,
+    onDelete: handleDeleteClick,
+  });
+
   return (
     <div className="p-6">
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Product List</h1>
-        <button onClick={handleCreateClick} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Create</button>
+        <button onClick={handleCreateClick}
+        className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gradient-to-r from-indigo-500 to-purple-500 hover:text-white">Create</button>
       </div>
-      <div className="overflow-x-auto bg-white rounded shadow">
-        <table className="min-w-full table-auto">
-          <thead className="bg-gray-100 text-left">
-            <tr>
-              <th className="px-4 py-2">ID</th>
-              <th className="px-4 py-2">Image</th>
-              <th className="px-4 py-2">Name</th>
-              <th className="px-4 py-2">Category</th>
-              <th className="px-4 py-2">Status</th>
-              <th className="px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr>
-                <td colSpan="4" className="text-center py-4">Loading products...</td>
-              </tr>
-            ) : products.length > 0 ? (
-              products.map((product, index) => (
-              <tr key={product._id} className="border-b">
-                  <td className="px-4 py-3">{index + 1}</td>
-                  <td className="px-4 py-3"><img src={product.featured_image} alt={product.name} width={50} height={50} /></td>
-                  <td className="px-4 py-3">{product.name}</td>
-                  <td className="px-4 py-3">{product.category === '1' ? 'Category 1' : 'Category 2'}</td>
-                  <td className="px-4 py-3"><span className={`py-1 px-3 rounded-full text-xs ${product.isActive === true ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'}`}>{product.isActive == true ? 'Active' : 'Inactive'}</span></td>
-                  <td className="px-4 py-3">
-                      <button type="button" className="text-blue-600 mr-2" onClick={() => handleEditClick(product)}>Edit</button>
-                      <button type="button" className="text-red-600" onClick={() => handleDeleteClick(product._id)}>Delete</button>
-                  </td>
-              </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4" className="text-center py-4 text-gray-500">
-                  No products found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+
+        {isLoading ? (
+            <div className="text-center py-4">Loading products...</div>
+        ) : products.length > 0 ? (
+            <DataTable columns={columns} data={products} />
+        ) : (
+          <div className="text-center py-4">
+            No products found.
+          </div>
+        )}
+
       <ProductFormModal
         product={editingProduct}
         onSubmit={handleFormSubmit}

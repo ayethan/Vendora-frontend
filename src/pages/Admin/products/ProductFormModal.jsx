@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { FiCpu, FiShoppingBag, FiBookOpen, FiSmile, FiAward, FiHeart, FiPlusSquare, FiCoffee, FiArchive } from "react-icons/fi";
 import FormInput from "../../../components/Form/FormInput";
@@ -7,14 +7,18 @@ import RichTextEditor from "../../../components/Form/RichTextEditor";
 import ImageUpload from "../../../components/Form/ImageUpload";
 import DisplayImage from "./DisplayImage";
 import uploadImage from "../../../helpers/uploadImage";
+import { toast } from "react-toastify";
+import categoryService from "../../../services/category";
 
-const categoriesData = [
-    {id: 1, name: 'Electronics', icon: <FiCpu /> }, {id: 2, name: 'Fashion', icon: <FiShoppingBag /> },
-    {id: 3,name: 'Books', icon: <FiBookOpen /> },
-    {id: 4,name: 'Toys', icon: <FiSmile /> }, {id: 5,name: 'Sports', icon: <FiAward /> },
-    {id: 6,name: 'Beauty', icon: <FiHeart /> }, {id: 7, name: 'Health', icon: <FiPlusSquare /> },
-    {id: 8,name: 'Food', icon: <FiCoffee /> }, {id: 9, name: 'Furniture', icon: <FiArchive /> },
-];
+// const categoriesData = [
+//     {id: 1, name: 'Electronics', icon: <FiCpu /> }, {id: 2, name: 'Fashion', icon: <FiShoppingBag /> },
+//     {id: 3,name: 'Books', icon: <FiBookOpen /> },
+//     {id: 4,name: 'Toys', icon: <FiSmile /> }, {id: 5,name: 'Sports', icon: <FiAward /> },
+//     {id: 6,name: 'Beauty', icon: <FiHeart /> }, {id: 7, name: 'Health', icon: <FiPlusSquare /> },
+//     {id: 8,name: 'Food', icon: <FiCoffee /> }, {id: 9, name: 'Furniture', icon: <FiArchive /> },
+// ];
+
+
 
 function ProductFormModal({ product, onSubmit, onClose }) {
   const {
@@ -27,9 +31,21 @@ function ProductFormModal({ product, onSubmit, onClose }) {
     formState: { errors },
   } = useForm();
   const productImages = watch("image", product?.image || []);
+  const [categoryData,setCategoryData] = useState([]);
   const [openFullScreenImage, setOpenFullScreenImage] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState("");
   const [isUploadingFeaturedImage, setIsUploadingFeaturedImage] = useState(false);
+
+  const categoriesData = useCallback(async () => {
+    try {
+      const data = await categoryService.getCategory();
+      console.log('category',data)
+      setCategoryData(data);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      toast.error("Failed to fetch products.");
+    }
+  }, []);
 
   useEffect(() => {
     if (product) {
@@ -47,6 +63,7 @@ function ProductFormModal({ product, onSubmit, onClose }) {
         id: product._id,
       });
     }
+    categoriesData();
   }, [product, reset]);
 
   if (!product) {
@@ -133,8 +150,8 @@ function ProductFormModal({ product, onSubmit, onClose }) {
               rules={{ required: "Category is required" }}
             >
               <option value="">Select Category</option>
-              {categoriesData.map((category) => (
-                <option key={category.id} value={category.id}>
+              {categoryData.map((category) => (
+                <option key={category._id} value={category._id}>
                   {category.name}
                 </option>
               ))}
@@ -221,7 +238,7 @@ function ProductFormModal({ product, onSubmit, onClose }) {
             <button
               type="submit"
               disabled={isSaveButtonDisabled}
-              className={`px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 ${
+              className={`px-4 py-2 bg-gray-700 text-white rounded hover:bg-gradient-to-r from-indigo-500 to-purple-500 hover:text-white disabled:bg-blue-300 ${
                 isSaveButtonDisabled ? "cursor-not-allowed" : "cursor-pointer"
               }`}
             >

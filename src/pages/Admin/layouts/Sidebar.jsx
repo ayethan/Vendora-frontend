@@ -1,13 +1,19 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom';
-
 
 
 function Sidebar() {
   const location = useLocation();
+  const isProductPath = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/category');
+  const [isProductMenuOpen, setProductMenuOpen] = useState(isProductPath);
+
+  useEffect(() => {
+    setProductMenuOpen(isProductPath);
+  }, [isProductPath]);
+
   return (
     <aside
-        className="w-64 bg-gray-800 border-r border-gray-200 p-4 flex-col flex-shrink-0 hidden md:flex">
+        className="w-64 bg-gray-700 border-r border-gray-200 p-4 flex-col flex-shrink-0 hidden md:flex">
 
         <nav aria-label="Main navigation" className="flex-1 overflow-y-auto">
           <ul className="space-y-1">
@@ -45,11 +51,58 @@ function Sidebar() {
             </Link>
         </li>
         <li>
-          <Link
-            to="/admin/products"
-            aria-current={location.pathname === '/admin/products' ? 'page' : undefined}
+          <button
+            onClick={() => setProductMenuOpen(!isProductMenuOpen)}
             className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-          location.pathname === '/admin/products'
+          isProductPath
+            ? 'bg-indigo-50 text-gray-900 font-semibold'
+            : 'text-white hover:bg-gradient-to-r from-indigo-500 to-purple-500 hover:text-white'
+            }`}
+          >
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M21 16V8a2 2 0 0 0-2-2h-4l-2-2H7a2 2 0 0 0-2 2v10" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M3 16h18" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span>Products</span>
+            <svg className={`h-5 w-5 ml-auto transform transition-transform ${isProductMenuOpen ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+          {isProductMenuOpen && (
+            <ul className="pl-7 space-y-1 mt-1">
+              <li>
+                <Link
+                  to="/admin/products"
+                  className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm ${
+                    location.pathname === '/admin/products'
+                      ? 'bg-indigo-50 text-gray-900 font-semibold'
+                      : 'text-white hover:bg-gray-600'
+                  }`}
+                >
+                  <span>Product List</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/admin/category"
+                  className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm ${
+                    location.pathname === '/admin/category'
+                      ? 'bg-indigo-50 text-gray-900 font-semibold'
+                      : 'text-white hover:bg-gray-600'
+                  }`}
+                >
+                  <span>Category</span>
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
+        <li>
+          <Link
+            to="/admin/blog"
+            aria-current={location.pathname === '/admin/blog' ? 'page' : undefined}
+            className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+          location.pathname === '/admin/blog'
             ? 'bg-indigo-50 text-gray-900 font-semibold'
             : 'text-white hover:bg-gradient-to-r from-indigo-500 to-purple-500 hover:text-white'
             }`}
@@ -58,7 +111,7 @@ function Sidebar() {
           <path d="M21 16V8a2 2 0 0 0-2-2h-4l-2-2H7a2 2 0 0 0-2 2v10" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M3 16h18" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <span>Products</span>
+            <span>Blog</span>
           </Link>
         </li>
 

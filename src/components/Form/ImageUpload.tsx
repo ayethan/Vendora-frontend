@@ -1,7 +1,14 @@
 import React from 'react';
 import { CloudDownload } from 'lucide-react';
 
-const ImageUpload = ({
+interface ImageUploadProps {
+  onFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  productImages: string[];
+  setOpenFullScreenImage: React.Dispatch<React.SetStateAction<boolean>>;
+  setFullScreenImage: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const ImageUpload: React.FC<ImageUploadProps> = ({
   onFileUpload,
   productImages,
   setOpenFullScreenImage,

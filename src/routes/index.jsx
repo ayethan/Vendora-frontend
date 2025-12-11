@@ -14,6 +14,7 @@ import SignUp from '../pages/Auth/SignUp'
 import Dashboard from '../pages/Admin/Dashboard'
 import DashboardHome from '../pages/Admin/DashboardHome'
 import ProductList from '../pages/Admin/products/ProductList'
+import Category from '../pages/Admin/categories/Index'
 import OrderList from '../pages/Admin/orders/OrderList'
 import UserList from '../pages/Admin/users/UserList'
 import { useSelector } from 'react-redux'
@@ -75,6 +76,7 @@ function AllRoutes() {
                             <Route path='users' element={<UserList />} />
                             <Route path='products' element={<ProductList />} />
                             <Route path='orders' element={<OrderList />} />
+                            <Route path='category' element={<Category />} />
                         </Route>
                     </Route>
                 </Route>
