@@ -4,7 +4,7 @@ import { React, useState, useEffect, useRef } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { logoutUser } from '../store/userSlice';
+import { logoutUser } from '../store/userSlice.ts';
 import { toast } from 'react-toastify';
 
 const Navbar = () => {

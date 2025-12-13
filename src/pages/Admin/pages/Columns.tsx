@@ -1,8 +1,6 @@
-// src/components/categories/ProductColumns.tsx
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
-// --- Import Shadcn Components ---
 import { Button } from "../../../components/ui/button.js";
 import { Checkbox } from "../../../components/ui/checkbox.js";
 import {
@@ -15,20 +13,17 @@ import {
 } from "../../../components/ui/dropdown-menu.js";
 import { MoreHorizontal } from "lucide-react";
 
-import type { Product } from "../../../services/product.ts";
+import type { Page } from "../../../services/page.ts";
 
-// --- Define Action Handlers (Passed from the parent component) ---
-interface ProductColumnProps {
-  onEdit: (product: Product) => void;
+interface PageColumnProps {
+  onEdit: (page: Page) => void;
   onDelete: (id: string) => void;
 }
 
-// --- The Columns Definition Function ---
-export const createProductColumns = ({
+export const createPageColumns = ({
   onEdit,
   onDelete,
-}: ProductColumnProps): ColumnDef<Product>[] => [
-  // 1. Selection Column (Optional)
+}: PageColumnProps): ColumnDef<Page>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -53,16 +48,16 @@ export const createProductColumns = ({
   },
 
   {
-    accessorKey: "featured_image",
+    accessorKey: "image",
     header: "Image",
     cell: ({ row }) => (
-      <img src={row.original.featured_image} alt={row.original.name} width={50} height={50} />
+      <img src={row.original.image} alt={row.original.title} width={50} height={50} />
     )
   },
 
-  // 2. Name Column (Sortable)
+
   {
-    accessorKey: "name",
+    accessorKey: "title",
     header: ({ column }) => {
       return (
         <Button
@@ -74,24 +69,24 @@ export const createProductColumns = ({
         </Button>
       );
     },
-    cell: ({ row }) => <div className="font-medium">{row.getValue("name")}</div>,
+    cell: ({ row }) => <div className="font-medium">{row.getValue("title")}</div>,
   },
 
-  // 3. Description Column (Custom rendering for HTML content)
   {
-    accessorKey: "category.name",
-    header: "Category",
+    accessorKey: "content",
+    header: "content",
     cell: ({ row }) => (
-      <div className="max-w-xs overflow-hidden text-ellipsis whitespace-nowrap">
-        {row.original.category?.name || "N/A"}
-      </div>
+      <div
+        className="max-w-xs overflow-hidden text-ellipsis whitespace-nowrap"
+        dangerouslySetInnerHTML={{ __html: row.original.content }}
+        title={row.original.content.replace(/(<([^>]+)>)/gi, "")}
+      />
     ),
   },
 
-  // 4. Status Column
   {
-    accessorFn: (row) => row.isActive, // Explicitly access isActive property
-    id: "isActive", // Add an ID for the column
+    accessorFn: (row) => row.isActive,
+    id: "isActive",
     header: "Status",
     cell: ({ row }) => {
       const isActive = row.original.isActive === true;
@@ -108,15 +103,13 @@ export const createProductColumns = ({
         </span>
       );
     },
-    // Allows sorting by boolean value
     enableSorting: true,
   },
 
-  // 5. Actions Column (Dropdown Menu)
   {
     id: "actions",
     cell: ({ row }) => {
-      const Product = row.original;
+      const Page = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -128,12 +121,12 @@ export const createProductColumns = ({
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onEdit(Product)}>
+            <DropdownMenuItem onClick={() => onEdit(Page)}>
               Edit
             </DropdownMenuItem>
             <DropdownMenuItem
               className="text-red-600"
-              onClick={() => onDelete(Product._id)}
+              onClick={() => onDelete(Page._id)}
             >
               Delete
             </DropdownMenuItem>

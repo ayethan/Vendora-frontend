@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import ProductFormModal from './ProductFormModal';
-import productService from '../../../services/product';
+import ProductFormModal from './ProductFormModal.js';
+import productService, { type Product } from '../../../services/product.js';
 import { DataTable } from "../../../components/ui/data-table.js";
 import { createProductColumns } from "./ProductColumns.js";
 import { toast } from 'react-toastify';
 
 function ProductList() {
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [products, setProducts] = useState([]);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchProducts = useCallback(async () => {
@@ -24,10 +24,25 @@ function ProductList() {
   }, []);
 
   const handleCreateClick = () => {
-    setEditingProduct({});
+    setEditingProduct({
+      _id: '',
+      name: '',
+      description: '',
+      price: 0,
+      featured_image: '',
+      image: [],
+      category: {
+        _id: '',
+        name: ''
+      },
+      slug: '',
+      shopCategory: '',
+      brand: '',
+      isActive: true,
+    });
   };
 
-  const handleEditClick = (product) => {
+  const handleEditClick = (product: Product) => {
     setEditingProduct(product);
   };
 
@@ -39,9 +54,9 @@ function ProductList() {
     setEditingProduct(null);
   };
 
-  const handleFormSubmit = async (productData) => {
+  const handleFormSubmit = async (productData: Product) => {
     try {
-      if (productData.id) {
+      if (productData._id) {
         await productService.updateProduct(productData);
         toast.success("Product Updated Successfully");
       } else {
@@ -56,7 +71,7 @@ function ProductList() {
     }
   };
 
-  const handleDeleteClick = async (productId) => {
+  const handleDeleteClick = async (productId: string) => {
     try {
       await productService.deleteProduct(productId);
       toast.success("Product Deleted Successfully");

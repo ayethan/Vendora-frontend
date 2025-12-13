@@ -4,7 +4,7 @@ import ProductModel from'./ProductModel';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import { setCart } from '../store/userSlice';
+import { setCart } from '../store/userSlice.ts';
 import axios from 'axios';
 
 const ProductCard = ({ product }) => {

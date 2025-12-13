@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import './App.css'
-import AllRoutes from './routes/index.jsx';
+import AllRoutes from './routes/index';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUserDetails, fetchCart } from './store/userSlice.js';
+import { fetchUserDetails, fetchCart } from './store/userSlice'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Elements } from '@stripe/react-stripe-js';

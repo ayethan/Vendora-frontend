@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { setCart } from '../../../store/userSlice.js';
+import { setCart } from '../../../store/userSlice.ts';
 import CheckoutPage from './CheckoutPage.jsx';
 
 const Checkout = () => {

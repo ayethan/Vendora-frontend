@@ -1,24 +1,24 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch } from 'react-redux';
 import { fetchUserDetails, fetchCart } from '../../store/userSlice.js';
-import userService from '../../services/user.js';
+import userService, { type UserSignInData, type User } from '../../services/user.js';
 
 function SignIn() {
 
   const [showPassword, setShowPassword] = useState(false);
-  const [data,setData] = useState({
+  const [data,setData] = useState<UserSignInData>({
         email : "",
         password : ""
     })
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<any>();
 
-  const handleOnChange = (e) =>{
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
         const { name , value } = e.target
 
         setData((preve)=>{
@@ -30,17 +30,17 @@ function SignIn() {
     }
 
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await userService.signIn(data);
-      const user = response.data;
+      const response: User = await userService.signIn(data);
+      const user = response;
       toast.success("Signed In Successfully");
       dispatch(fetchUserDetails());
       dispatch(fetchCart());
-      console.log("User after sign in:", user.role == "Admin");
-      {user.role == "Admin" ? navigate("/admin") : navigate("/")  }
-    } catch (error) {
+      console.log("User after sign in:", user.isAdmin);
+      {user.isAdmin ? navigate("/admin") : navigate("/")  }
+    } catch (error: any) {
       console.error("There was an error!", error);
       toast.error(error.response?.data?.message || "Sign In Failed");
     }
@@ -48,7 +48,6 @@ function SignIn() {
 
   return (
       <div className="max-w-120 mx-auto m-25 bg-white shadow-2xl">
-        <ToastContainer />
         <h1 className="text-3xl text-center font-bold p-5">Sign In</h1>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-5 p-5">

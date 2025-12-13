@@ -4,7 +4,7 @@ import axios from 'axios';
 import ProductCard from '../../../components/ProductCard';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import { setCart } from '../../../store/userSlice';
+import { setCart } from '../../../store/userSlice.ts';
 
 function ProductDetail() {
   const { id } = useParams();
@@ -127,7 +127,7 @@ function ProductDetail() {
               {(product.image && product.image.length > 1) && (
                 <div className="flex gap-3 overflow-x-auto pb-2">
                   {product.image.map((img, index) => (
-                    <div 
+                    <div
                       key={index}
                       className={`flex-shrink-0 w-24 h-24 rounded-lg cursor-pointer overflow-hidden border-2 transition-all ${mainImage === img ? 'border-blue-500 scale-105' : 'border-transparent hover:border-gray-300'}`}
                       onClick={() => handleThumbnailClick(img)}
@@ -168,7 +168,7 @@ function ProductDetail() {
                   <p className="text-4xl font-extrabold text-gray-900">${product.price.toFixed(2)}</p>
                 )}
               </div>
-              
+
               {product.stock !== undefined && (
                 <p className="text-sm font-medium text-gray-600 mb-6">
                   Availability: <span className={`${product.stock > 0 ? 'text-green-600' : 'text-red-600'} font-semibold`}>
@@ -176,7 +176,7 @@ function ProductDetail() {
                   </span>
                 </p>
               )}
-              
+
               <div className="flex items-center gap-4 mb-6">
                 <label htmlFor="quantity" className="text-md font-medium text-gray-700">Quantity:</label>
                 <input

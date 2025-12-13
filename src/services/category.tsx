@@ -1,17 +1,17 @@
 import axios from "axios";
 
-const API_URL = "/";
+const API_URL = "/categories";
 
-type CategoryData = {
-  id: string
+export type Category = {
+  _id: string
   name: string
   description: string
   isActive?: boolean
 }
 
 // Get all categorys
-const getCategory = async (): Promise<any> => {
-  const response = await axios.get(API_URL + "categories", {
+const getCategory = async (): Promise<Category[]> => {
+  const response = await axios.get(API_URL, {
     withCredentials: true,
   });
   console.log('category',response.data);
@@ -19,17 +19,17 @@ const getCategory = async (): Promise<any> => {
 };
 
 // Create a category
-const createCategory = async (categoryData: CategoryData): Promise<any> => {
-  const response = await axios.post(API_URL + "categories-create", categoryData, {
+const createCategory = async (categoryData: Omit<Category, 'id'>): Promise<Category> => {
+  const response = await axios.post(API_URL, categoryData, {
     withCredentials: true,
   });
   return response.data;
 };
 
 // Update a category
-const updateCategory = async (categoryData: CategoryData): Promise<any> => {
+const updateCategory = async (categoryData: Category): Promise<Category> => {
   const response = await axios.put(
-    API_URL + `categories-update/${categoryData.id}`,
+    API_URL + `/${categoryData._id}`,
     categoryData,
     { withCredentials: true }
   );
@@ -39,7 +39,7 @@ const updateCategory = async (categoryData: CategoryData): Promise<any> => {
 // Delete a category
 const deleteCategory = async (categoryId: string): Promise<any> => {
   const response = await axios.delete(
-    API_URL + `categories-delete/${categoryId}`,
+    API_URL + `/${categoryId}`,
     { withCredentials: true }
   );
   return response.data;

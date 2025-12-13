@@ -1,14 +1,14 @@
 import { Eye, EyeOff } from 'lucide-react';
-import {React, useState} from 'react'
+import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import userService from '../../services/user.js';
+import userService, { type UserSignUpData } from '../../services/user.ts';
 
 function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [showComfirmPassword, setShowComfirmPassword] = useState(false);
-  const [data,setData] = useState({
+  const [data,setData] = useState<UserSignUpData & { confirm_password: string }>({
         name : "",
         email : "",
         phone : "",
@@ -22,7 +22,7 @@ function SignUp() {
 
   const navigate = useNavigate();
 
-  const handleOnChange = (e) =>{
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
         const { name , value } = e.target
 
         setData((preve)=>{
@@ -32,7 +32,7 @@ function SignUp() {
             }
         })
     }
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       if(data.password !== data.confirm_password){
         toast.error("Password and Confirm Password do not match");
@@ -41,15 +41,14 @@ function SignUp() {
       }
       try {
         const response = await userService.signUp(data);
-        toast.success(response.data.message);
+        toast.success(response.message);
         navigate("/signin");
-      } catch (error) {
+      } catch (error: any) {
         toast.error(error.response?.data?.message || "Sign Up Failed");
       }
     }
   return (
     <div className="max-w-200 mx-auto m-25 bg-white shadow-2xl">
-      <ToastContainer />
       <h1 className="text-3xl text-center font-bold p-5">Sign Up</h1>
       <form onSubmit={handleSubmit}>
         <div className="grid gap-5 p-5">

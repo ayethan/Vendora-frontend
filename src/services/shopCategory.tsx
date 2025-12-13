@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "/";
+const API_URL = "/shop-categories";
 
 type CategoryData = {
   id: string
@@ -12,7 +12,7 @@ type CategoryData = {
 
 // Get all categorys
 const getCategory = async (): Promise<any> => {
-  const response = await axios.get(API_URL + "shop-categories", {
+  const response = await axios.get(API_URL, {
     withCredentials: true,
   });
   console.log('category',response.data);
@@ -21,7 +21,7 @@ const getCategory = async (): Promise<any> => {
 
 // Create a category
 const createCategory = async (categoryData: CategoryData): Promise<any> => {
-  const response = await axios.post(API_URL + "shop-categories-create", categoryData, {
+  const response = await axios.post(API_URL, categoryData, {
     withCredentials: true,
   });
   return response.data;
@@ -30,7 +30,7 @@ const createCategory = async (categoryData: CategoryData): Promise<any> => {
 // Update a category
 const updateCategory = async (categoryData: CategoryData): Promise<any> => {
   const response = await axios.put(
-    API_URL + `shop-categories-update/${categoryData.id}`,
+    API_URL + `/${categoryData.id}`,
     categoryData,
     { withCredentials: true }
   );
@@ -40,7 +40,7 @@ const updateCategory = async (categoryData: CategoryData): Promise<any> => {
 // Delete a category
 const deleteCategory = async (categoryId: string): Promise<any> => {
   const response = await axios.delete(
-    API_URL + `shop-categories-delete/${categoryId}`,
+    API_URL + `/${categoryId}`,
     { withCredentials: true }
   );
   return response.data;

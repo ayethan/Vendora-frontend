@@ -1,3 +1,4 @@
+import { ListOrdered, NotebookText, StickyNote, User } from 'lucide-react';
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom';
 
@@ -43,10 +44,7 @@ function Sidebar() {
               : 'text-white hover:bg-gradient-to-r from-indigo-500 to-purple-500 hover:text-white'
               }`}
             >
-              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M21 16V8a2 2 0 0 0-2-2h-4l-2-2H7a2 2 0 0 0-2 2v10" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M3 16h18" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <User/>
               <span>Users</span>
             </Link>
         </li>
@@ -75,7 +73,7 @@ function Sidebar() {
                   to="/admin/products"
                   className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm ${
                     location.pathname === '/admin/products'
-                      ? 'bg-indigo-50 text-gray-900 font-semibold'
+                      ? 'text-white bg-gray-600'
                       : 'text-white hover:bg-gray-600'
                   }`}
                 >
@@ -87,7 +85,7 @@ function Sidebar() {
                   to="/admin/category"
                   className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm ${
                     location.pathname === '/admin/category'
-                      ? 'bg-indigo-50 text-gray-900 font-semibold'
+                      ? 'text-white bg-gray-600'
                       : 'text-white hover:bg-gray-600'
                   }`}
                 >
@@ -99,6 +97,20 @@ function Sidebar() {
         </li>
         <li>
           <Link
+            to="/admin/pages"
+            aria-current={location.pathname === '/admin/pages' ? 'page' : undefined}
+            className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+          location.pathname === '/admin/pages'
+            ? 'bg-indigo-50 text-gray-900 font-semibold'
+            : 'text-white hover:bg-gradient-to-r from-indigo-500 to-purple-500 hover:text-white'
+            }`}
+          >
+            <NotebookText />
+            <span>Pages</span>
+          </Link>
+        </li>
+        <li>
+          <Link
             to="/admin/blog"
             aria-current={location.pathname === '/admin/blog' ? 'page' : undefined}
             className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
@@ -107,10 +119,7 @@ function Sidebar() {
             : 'text-white hover:bg-gradient-to-r from-indigo-500 to-purple-500 hover:text-white'
             }`}
           >
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path d="M21 16V8a2 2 0 0 0-2-2h-4l-2-2H7a2 2 0 0 0-2 2v10" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M3 16h18" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <StickyNote />
             <span>Blog</span>
           </Link>
         </li>
@@ -126,9 +135,7 @@ function Sidebar() {
             : 'text-white hover:bg-gradient-to-r from-indigo-500 to-purple-500 hover:text-white'
             }`}
           >
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path d="M3 7h18M7 7v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <ListOrdered />
             <span>Orders</span>
             <span className="ml-auto text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full">15</span>
           </Link>
