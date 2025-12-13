@@ -1,11 +1,25 @@
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, User } from 'lucide-react';
-import useClickOutside from './hooks/useClickOutside';
+import useClickOutside from './hooks/useClickOutside'; // .ts extension is implicit
 
-const UserMenu = ({ user, handleLogout }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const menuRef = useRef(null);
+// Assuming UserState is defined in Navbar.tsx or a common types file
+interface UserState {
+    _id: string;
+    name: string;
+    email: string;
+    role: string;
+    token: string;
+}
+
+interface UserMenuProps {
+    user: UserState | null;
+    handleLogout: () => Promise<void>;
+}
+
+const UserMenu: React.FC<UserMenuProps> = ({ user, handleLogout }) => {
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const menuRef = useRef<HTMLDivElement>(null);
 
     useClickOutside(menuRef, () => {
         setIsOpen(false);

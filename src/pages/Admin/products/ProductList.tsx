@@ -39,6 +39,9 @@ function ProductList() {
       shopCategory: '',
       brand: '',
       isActive: true,
+      selling_price: 0,
+      discount: 0,
+      stock: 0,
     });
   };
 

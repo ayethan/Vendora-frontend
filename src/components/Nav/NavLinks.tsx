@@ -1,7 +1,12 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-const NavLinks = ({ className, linkClassName }) => {
+interface NavLinksProps {
+    className?: string;
+    linkClassName?: string;
+}
+
+const NavLinks: React.FC<NavLinksProps> = ({ className, linkClassName }) => {
     const activeClass = 'text-red-500 ';
     const inactiveClass = 'text-gray-800 hover:text-red-500 transition-colors';
 

@@ -3,11 +3,33 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
 import { useSelector } from 'react-redux';
 
-const CartIcon = () => {
-    const user = useSelector((state: any) => state.user.user);
-    const cart = useSelector((state: any) => state.user.cart);
+// Define the User type based on assumed properties (similar to Navbar.tsx)
+interface UserState {
+    _id: string;
+    name: string;
+    email: string;
+    role: string;
+    token: string;
+}
 
-    const cartItemCount = cart?.items?.reduce((acc: any, item: any) => acc + item.quantity, 0) || 0;
+// Define the RootState type for useSelector (similar to Navbar.tsx)
+interface RootState {
+    user: {
+        user: UserState | null;
+        cart: {
+            items: Array<{
+                quantity: number;
+                // Add other cart item properties if needed
+            }>;
+        };
+    };
+}
+
+const CartIcon: React.FC = () => {
+    const user = useSelector((state: RootState) => state.user.user);
+    const cart = useSelector((state: RootState) => state.user.cart);
+
+    const cartItemCount = cart?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
 
     return (
         <Link to="/cart" className="relative flex items-center gap-2 text-gray-700 hover:text-black">

@@ -7,6 +7,7 @@ export type Category = {
   name: string
   description: string
   isActive?: boolean
+  image: string
 }
 
 // Get all categorys

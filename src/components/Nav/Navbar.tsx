@@ -3,26 +3,45 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Menu, X } from 'lucide-react';
-import { logoutUser } from '../../store/userSlice.ts';
+import { logoutUser } from '../../store/userSlice.js';
 
-import SearchBar from '../SearchBar.jsx';
-import UserMenu from '../UserMenu.jsx';
-import NavLinks from '../NavLinks.jsx';
-import LocationPicker from '../LocationPicker.jsx';
-import CartIcon from '../CartIcon.jsx';
+import SearchBar from './SearchBar.js';
+import UserMenu from './UserMenu.js';
+import NavLinks from './NavLinks.js';
+import LocationPicker from './LocationPicker.js';
+import CartIcon from './CartIcon.js';
 
-const Navbar = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const user = useSelector((state) => state.user.user);
+// Define the User type based on assumed properties
+interface UserState {
+    _id: string;
+    name: string;
+    email: string;
+    role: string;
+    token: string;
+}
+
+// Define the RootState type for useSelector
+interface RootState {
+    user: {
+        user: UserState | null;
+        cart: {
+            items: any[]; // You might want to define a more specific type for cart items
+        };
+    };
+}
+
+const Navbar: React.FC = () => {
+    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+    const user = useSelector((state: RootState) => state.user.user);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
         try {
-            await dispatch(logoutUser());
+            await dispatch(logoutUser() as any); // Type assertion for dispatching async thunk
             navigate("/signin");
             toast.success("Logout successful!");
-        } catch (error) {
+        } catch (error: any) {
             toast.error(error?.message || "Logout failed.");
             console.error("Logout error:", error);
         }

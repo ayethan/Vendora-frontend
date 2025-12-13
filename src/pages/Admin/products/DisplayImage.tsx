@@ -1,7 +1,12 @@
 import React from 'react'
 import { CgClose } from 'react-icons/cg'
 
-const DisplayImage = ({
+type Props = {
+    imgUrl: string;
+    onClose: () => void;
+}
+
+const DisplayImage: React.FC<Props>= ({
     imgUrl,
     onClose
 }) => {

@@ -3,7 +3,7 @@ import axios from "axios";
 const API_URL = "/shop-categories";
 
 type CategoryData = {
-  id: string
+  _id: string
   name: string
   image: string
   description: string
@@ -30,7 +30,7 @@ const createCategory = async (categoryData: CategoryData): Promise<any> => {
 // Update a category
 const updateCategory = async (categoryData: CategoryData): Promise<any> => {
   const response = await axios.put(
-    API_URL + `/${categoryData.id}`,
+    API_URL + `/${categoryData._id}`,
     categoryData,
     { withCredentials: true }
   );
