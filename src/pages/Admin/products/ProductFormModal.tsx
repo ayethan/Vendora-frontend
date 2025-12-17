@@ -3,6 +3,7 @@ import { useForm,
   type SubmitHandler,
   type Control,
   type FieldErrors } from "react-hook-form";
+import { useParams, useNavigate } from "react-router-dom"; // Added
 import FormInput from "../../../components/Form/FormInput.js";
 import FormSelect from "../../../components/Form/FormSelect.js";
 import RichTextEditor from "../../../components/Form/RichTextEditor.js";
@@ -11,19 +12,15 @@ import DisplayImage from "./DisplayImage.js";
 import uploadImage from "../../../helpers/uploadImage.js";
 import { toast } from "react-toastify";
 import categoryService, { type Category } from "../../../services/category.js";
-import type { Product } from "../../../services/product.js";
+import productService, { type Product } from "../../../services/product.js"; // Updated to use productService
 
 interface ProductFormData {
-  _id: string;
   name: string;
   description: string;
   price: number;
   featured_image: string;
   image: string[];
-  category: {
-    _id: string;
-    name: string;
-  };
+  category: string; // Changed from object to string ID
   slug: string;
   shopCategory: string;
   selling_price: number;
@@ -33,13 +30,10 @@ interface ProductFormData {
   isActive: boolean;
 }
 
-interface ProductFormModalProps {
-  product: Product | null;
-  onSubmit: (data: Product) => void;
-  onClose: () => void;
-}
+function ProductFormModal() {
+  const { restaurantId, productId } = useParams<{ restaurantId: string; productId: string }>();
+  const navigate = useNavigate();
 
-function ProductFormModal({ product, onSubmit, onClose }: ProductFormModalProps) {
   const {
     register,
     handleSubmit,
@@ -50,11 +44,12 @@ function ProductFormModal({ product, onSubmit, onClose }: ProductFormModalProps)
     formState: { errors },
   } = useForm<ProductFormData>();
 
-  const productImages = watch("image", product?.image || []);
+  const productImages = watch("image", []);
   const [categoryData, setCategoryData] = useState<Category[]>([]);
   const [openFullScreenImage, setOpenFullScreenImage] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState("");
   const [isUploadingFeaturedImage, setIsUploadingFeaturedImage] = useState(false);
+  const [isProductLoading, setIsProductLoading] = useState(false);
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -66,33 +61,65 @@ function ProductFormModal({ product, onSubmit, onClose }: ProductFormModalProps)
     }
   }, []);
 
+  // Effect to fetch product if editing or initialize form
   useEffect(() => {
-    if (product) {
+    fetchCategories(); // Fetch categories always
+
+    if (productId && restaurantId) {
+      setIsProductLoading(true);
+      productService.getProductById(restaurantId, productId)
+        .then((product) => {
+          reset({
+            name: product.name || "",
+            description: product.description || "",
+            price: product.price || 0,
+            featured_image: product.featured_image || "",
+            image: product.image || [],
+            category: product.category._id || '',
+            slug: product.slug || "",
+            shopCategory: product.shopCategory || "",
+            selling_price: product.selling_price || 0,
+            discount: product.discount || 0,
+            stock: product.stock || 0,
+            brand: product.brand || "",
+            isActive: product.isActive != null ? product.isActive : true,
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching product:", error);
+          toast.error("Failed to fetch product details.");
+          navigate(`/admin/restaurants/${restaurantId}/products`);
+        })
+        .finally(() => {
+          setIsProductLoading(false);
+        });
+    } else {
+      // Initialize for new product
       reset({
-        _id: product._id || '',
-        name: product.name || "",
-        featured_image: product.featured_image || "",
-        category: product.category || { _id: '', name: '' },
-        brand: product.brand || "",
-        description: product.description || "",
-        price: product.price || 0,
-        selling_price: product.selling_price ! || 0,
-        stock: product.stock || 0,
-        image: product.image || [],
-        slug: product.slug || "",
-        isActive: product.isActive != null ? product.isActive : true,
+        name: "",
+        description: "",
+        price: 0,
+        featured_image: "",
+        image: [],
+        category: "",
+        slug: "",
+        shopCategory: "",
+        selling_price: 0,
+        discount: 0,
+        stock: 0,
+        brand: "",
+        isActive: true,
       });
     }
-    fetchCategories();
-  }, [product, reset, fetchCategories]);
+  }, [productId, restaurantId, reset, navigate, fetchCategories]);
 
-  if (!product) {
-    return null;
-  }
+  const onFormSubmit: SubmitHandler<ProductFormData> = async (data) => {
+    if (!restaurantId) {
+      toast.error("Restaurant ID is missing.");
+      return;
+    }
 
-  const onFormSubmit: SubmitHandler<ProductFormData> = (data) => {
-    const productToSubmit: Product = {
-      _id: product?._id || '',
+    const productToSubmit = {
       name: data.name,
       featured_image: data.featured_image,
       category: data.category,
@@ -107,7 +134,20 @@ function ProductFormModal({ product, onSubmit, onClose }: ProductFormModalProps)
       image: data.image || [],
       discount: Number(data.discount),
     };
-    onSubmit(productToSubmit);
+
+    try {
+      if (productId) { // Editing existing product
+        await productService.updateProduct(restaurantId, productId, productToSubmit);
+        toast.success("Product Updated Successfully");
+      } else { // Creating new product
+        await productService.createProduct(restaurantId, productToSubmit);
+        toast.success("Product Created Successfully");
+      }
+      navigate(`/admin/restaurants/${restaurantId}/products`); // Navigate back to list
+    } catch (error) {
+      console.error('Error saving product:', error);
+      toast.error('Failed to save product.');
+    }
   };
 
   const handleFeaturedImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,21 +178,29 @@ function ProductFormModal({ product, onSubmit, onClose }: ProductFormModalProps)
 
   const isSaveButtonDisabled = isUploadingFeaturedImage;
 
+  if (isProductLoading) {
+    return (
+      <div className="fixed inset-0 bg-gray-900/50 bg-opacity-35 flex justify-center items-center z-50 p-4">
+        <div className="bg-white p-6 rounded-lg shadow-xl text-center">
+          Loading product details...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
-      key={product ? product._id : ""}
       className="fixed w-full h-full bg-gray-900/50 bg-opacity-35 top-0 left-0 right-0 bottom-0 flex justify-center items-center overflow-y-autofixed inset-0 bg-gray-900/50 z-50 flex items-start sm:items-center justify-center p-4 sm:p-6 overflow-y-auto"
       aria-modal="true"
       role="dialog"
-      // tabIndex="-1"
     >
       <div className="bg-white p-4 sm:p-6 rounded-lg shadow-xl w-full max-w-lg sm:max-w-2xl mx-auto my-8 sm:my-0 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">
-            {product._id ? "Edit Product" : "Create Product"}
+            {productId ? "Edit Product" : "Create Product"}
           </h2>
           <button
-            onClick={onClose}
+            onClick={() => navigate(`/admin/restaurants/${restaurantId}/products`)}
             className="text-gray-500 hover:text-black font-semibold bg-gray-100 py-1 px-3 rounded cursor-pointer"
           >
             &times;
@@ -207,6 +255,7 @@ function ProductFormModal({ product, onSubmit, onClose }: ProductFormModalProps)
               name="description"
               control={control as unknown as Control<Record<string, any>>}
               errors={errors as unknown as FieldErrors<Record<string, any>>}
+              label="Description"
             />
             <FormInput
               label="Price"
@@ -267,7 +316,7 @@ function ProductFormModal({ product, onSubmit, onClose }: ProductFormModalProps)
             <button
               type="button"
               className="px-4 py-2 bg-gray-200 rounded text-sm cursor-pointer"
-              onClick={onClose}
+              onClick={() => navigate(`/admin/restaurants/${restaurantId}/products`)}
             >
               Cancel
             </button>

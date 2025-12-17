@@ -4,24 +4,17 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import FormInput from "../../../components/Form/FormInput.js";
 import FormSelect from "../../../components/Form/FormSelect.js";
 import RichTextEditor from "../../../components/Form/RichTextEditor.js";
+import {type Cuisine } from "../../../services/cuisine.js";
 
-interface Category {
-  _id?: string;
-  name: string;
-  image: string;
-  description: string;
-  isActive?: boolean;
-}
-
-interface FormModelProps {
-  category?: Category;
-  onSubmit: (data: CategoryFormData) => void;
+interface CuisineFormModelProps {
+  cuisine?: Cuisine;
+  onSubmit: (data: CuisineFormData) => void;
   onClose: () => void;
 }
 
-type CategoryFormData = Omit<Category, "_id">;
+type CuisineFormData = Omit<Cuisine, "_id">;
 
-function FormModel({ category, onSubmit, onClose }: FormModelProps) {
+function FormModel({ cuisine, onSubmit, onClose }: CuisineFormModelProps) {
   const {
     register,
     handleSubmit,
@@ -29,17 +22,17 @@ function FormModel({ category, onSubmit, onClose }: FormModelProps) {
     setValue,
     control,
     reset,
-  } = useForm<CategoryFormData>();
+  } = useForm<CuisineFormData>();
 
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [openFullScreenImage, setOpenFullScreenImage] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState("");
 
   useEffect(() => {
-    if (category) {
-      reset(category);
+    if (cuisine) {
+      reset(cuisine);
     }
-  }, [category, reset]);
+  }, [cuisine, reset]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -57,13 +50,13 @@ function FormModel({ category, onSubmit, onClose }: FormModelProps) {
     }
   };
 
-  const onFormSubmit: SubmitHandler<CategoryFormData> = (data) => {
+  const onFormSubmit: SubmitHandler<CuisineFormData> = (data) => {
     onSubmit(data);
   };
 
   return (
     <div
-      key={category?._id}
+      key={cuisine?._id}
       className="fixed w-full h-full bg-gray-900/50 bg-opacity-35 top-0 left-0 right-0 bottom-0 flex justify-center items-center overflow-y-auto z-50 p-4 sm:p-6"
       aria-modal="true"
       role="dialog"
@@ -72,7 +65,7 @@ function FormModel({ category, onSubmit, onClose }: FormModelProps) {
       <div className="bg-white p-4 sm:p-6 rounded-lg shadow-xl w-full max-w-lg sm:max-w-2xl mx-auto my-8 sm:my-0 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">
-            {category?._id ? "Edit category" : "Create category"}
+            {cuisine?._id ? "Edit cuisine" : "Create cuisine"}
           </h2>
           <button
             onClick={onClose}
@@ -88,7 +81,7 @@ function FormModel({ category, onSubmit, onClose }: FormModelProps) {
               name="name"
               register={register}
               errors={errors}
-              rules={{ required: "Category name is required" }}
+              rules={{ required: "Cuisine name is required" }}
             />
             <FormSelect
               label="Status"
@@ -102,10 +95,10 @@ function FormModel({ category, onSubmit, onClose }: FormModelProps) {
               <option value="false">Inactive</option>
             </FormSelect>
             <RichTextEditor
-              label="Description"
               name="description"
               control={control}
               errors={errors}
+              label="Description"
             />
 
             <div>

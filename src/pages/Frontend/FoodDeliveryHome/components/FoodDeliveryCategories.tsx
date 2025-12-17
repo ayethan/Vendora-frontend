@@ -3,7 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { FaPizzaSlice, FaHamburger, FaIceCream, FaCarrot, FaCoffee, FaFish } from 'react-icons/fa';
 import { FiSun, FiMoon } from 'react-icons/fi';
 
-const foodCategoriesData = [
+interface FoodCategory {
+    id: number;
+    name: string;
+    icon: React.ReactNode;
+}
+
+const foodCategoriesData: FoodCategory[] = [
     {id: 1, name: 'Pizza', icon: <FaPizzaSlice /> },
     {id: 2, name: 'Burgers', icon: <FaHamburger /> },
     {id: 3, name: 'Sushi', icon: <FaFish /> },
@@ -14,7 +20,17 @@ const foodCategoriesData = [
     {id: 8, name: 'Dinner', icon: <FiMoon /> },
 ];
 
-const FoodCategoryCard = ({ category, onCategoryClick }) => (
+type FoodCategoryCardProps = {
+    category: {
+        id: number;
+        name: string;
+        icon: React.ReactNode;
+    };
+    onCategoryClick: (categoryName: string) => void;
+};
+
+
+const FoodCategoryCard: React.FC<FoodCategoryCardProps> = ({ category, onCategoryClick }) => (
     <div
         className="group bg-white p-6 rounded-xl shadow-md text-center hover:bg-gradient-to-r from-red-500 to-orange-500 transition-all duration-300 transform hover:-translate-y-2 cursor-pointer"
         onClick={() => onCategoryClick(category.name)}
@@ -29,7 +45,7 @@ const FoodCategoryCard = ({ category, onCategoryClick }) => (
 const FoodDeliveryCategories = () => {
     const navigate = useNavigate();
 
-    const handleCategoryClick = (categoryName) => {
+    const handleCategoryClick = (categoryName: string) => {
         navigate(`/product?category=${categoryName}`);
     };
 

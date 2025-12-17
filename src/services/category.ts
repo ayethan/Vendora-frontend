@@ -2,12 +2,12 @@ import axios from "axios";
 
 const API_URL = "/categories";
 
-export type Category = {
+export interface Category{
   _id: string
   name: string
   description: string
-  isActive?: boolean
   image: string
+  isActive?: boolean
 }
 
 // Get all categorys
@@ -20,7 +20,7 @@ const getCategory = async (): Promise<Category[]> => {
 };
 
 // Create a category
-const createCategory = async (categoryData: Omit<Category, 'id'>): Promise<Category> => {
+const createCategory = async (categoryData: Omit<Category, '_id'>): Promise<Category> => {
   const response = await axios.post(API_URL, categoryData, {
     withCredentials: true,
   });

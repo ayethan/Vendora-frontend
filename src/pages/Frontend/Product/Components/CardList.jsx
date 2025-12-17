@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import ProductCard from '../../../../components/ProductCard';
+import ProductCard from '../../../../components/ProductCard.js';
 import Pagination from '../../../../components/Pagination';
 
 

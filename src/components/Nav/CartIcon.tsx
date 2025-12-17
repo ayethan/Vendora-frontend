@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
 import { useSelector } from 'react-redux';
 
-// Define the User type based on assumed properties (similar to Navbar.tsx)
 interface UserState {
     _id: string;
     name: string;
@@ -12,14 +11,12 @@ interface UserState {
     token: string;
 }
 
-// Define the RootState type for useSelector (similar to Navbar.tsx)
 interface RootState {
     user: {
         user: UserState | null;
         cart: {
             items: Array<{
                 quantity: number;
-                // Add other cart item properties if needed
             }>;
         };
     };

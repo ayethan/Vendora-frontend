@@ -1,9 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, User } from 'lucide-react';
-import useClickOutside from './hooks/useClickOutside'; // .ts extension is implicit
+import useClickOutside from './hooks/useClickOutside.js';
 
-// Assuming UserState is defined in Navbar.tsx or a common types file
 interface UserState {
     _id: string;
     name: string;

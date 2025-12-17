@@ -11,7 +11,6 @@ import NavLinks from './NavLinks.js';
 import LocationPicker from './LocationPicker.js';
 import CartIcon from './CartIcon.js';
 
-// Define the User type based on assumed properties
 interface UserState {
     _id: string;
     name: string;
@@ -20,12 +19,11 @@ interface UserState {
     token: string;
 }
 
-// Define the RootState type for useSelector
 interface RootState {
     user: {
         user: UserState | null;
         cart: {
-            items: any[]; // You might want to define a more specific type for cart items
+            items: any[];
         };
     };
 }
@@ -38,7 +36,7 @@ const Navbar: React.FC = () => {
 
     const handleLogout = async () => {
         try {
-            await dispatch(logoutUser() as any); // Type assertion for dispatching async thunk
+            await dispatch(logoutUser() as any);
             navigate("/signin");
             toast.success("Logout successful!");
         } catch (error: any) {

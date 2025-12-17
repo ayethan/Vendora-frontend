@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { FiEye, FiShoppingCart } from 'react-icons/fi';
-import ProductModel from'./ProductModel';
+import ProductModel from'./ProductModel.js';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import { setCart } from '../store/userSlice.ts';
+import { setCart } from '../store/userSlice.js';
 import axios from 'axios';
+import { type Product } from '../services/product.js';
 
-const ProductCard = ({ product }) => {
+const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const [showModel, setShowModel] = useState(false);
-  const user = useSelector(state => state.user.user);
+  const user = useSelector((state: any) => state.user.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -21,8 +22,8 @@ const ProductCard = ({ product }) => {
     setShowModel(false);
   };
 
-  const handleAddToCart = async (e) => {
-    e.stopPropagation(); // prevent link navigation
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!user) {
       toast.error("Please login to add items to your cart.");
       navigate('/signin');
@@ -46,7 +47,7 @@ const ProductCard = ({ product }) => {
 
  return (
   <div className="bg-white rounded-sm overflow-hidden group hover:shadow-xl transition-shadow duration-300 relative" key={product._id}>
-    <Link to={`/product/${product._id}`}> {/* Link for the image */}
+    <Link to={`/product/${product.slug}`}> {/* Link for the image */}
       <div className="w-full h-55 overflow-hidden">
         <img src={product.featured_image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer" />
       </div>
@@ -60,7 +61,7 @@ const ProductCard = ({ product }) => {
       </button>
     </div>
     <div className="p-4">
-      <Link to={`/product/${product._id}`}> {/* Link for the product name */}
+      <Link to={`/product/${product.slug}`}> {/* Link for the product name */}
         <h3 className="text-lg font-medium text-gray-800 mb-2 truncate cursor-pointer">{product.name}</h3>
       </Link>
       <div className="flex items-center justify-between">

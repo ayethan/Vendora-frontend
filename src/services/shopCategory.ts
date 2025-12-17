@@ -2,55 +2,55 @@ import axios from "axios";
 
 const API_URL = "/shop-categories";
 
-type CategoryData = {
-  _id: string
-  name: string
-  image: string
-  description: string
-  isActive?: boolean
+export interface ShopCategory {
+  _id: string;
+  name: string;
+  image: string;
+  description: string;
+  isActive?: boolean;
 }
 
-// Get all categorys
-const getCategory = async (): Promise<any> => {
+// Get all shop categories
+const getShopCategory = async (): Promise<ShopCategory[]> => {
   const response = await axios.get(API_URL, {
     withCredentials: true,
   });
-  console.log('category',response.data);
   return response.data;
 };
 
-// Create a category
-const createCategory = async (categoryData: CategoryData): Promise<any> => {
+// Create a shop category
+const createShopCategory = async (categoryData: Omit<ShopCategory, "_id">): Promise<ShopCategory> => {
   const response = await axios.post(API_URL, categoryData, {
     withCredentials: true,
   });
   return response.data;
 };
 
-// Update a category
-const updateCategory = async (categoryData: CategoryData): Promise<any> => {
+// Update a shop category
+const updateShopCategory = async (categoryId: string, categoryData: ShopCategory): Promise<ShopCategory> => {
   const response = await axios.put(
-    API_URL + `/${categoryData._id}`,
+    `${API_URL}/${categoryId}`,
     categoryData,
     { withCredentials: true }
   );
   return response.data;
 };
 
-// Delete a category
-const deleteCategory = async (categoryId: string): Promise<any> => {
+
+// Delete a shop category
+const deleteShopCategory = async (categoryId: string): Promise<any> => {
   const response = await axios.delete(
-    API_URL + `/${categoryId}`,
+    `${API_URL}/${categoryId}`,
     { withCredentials: true }
   );
   return response.data;
 };
 
-const categoryService = {
-  getCategory,
-  createCategory,
-  updateCategory,
-  deleteCategory,
+const shopCategoryService = {
+  getShopCategory,
+  createShopCategory,
+  updateShopCategory,
+  deleteShopCategory,
 };
 
-export default categoryService;
+export default shopCategoryService;

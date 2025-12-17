@@ -7,12 +7,13 @@ interface RichTextEditorProps {
   control: any;
   name: string;
   errors: any;
+  label: string;
 }
 
 
-const RichTextEditor: React.FC<RichTextEditorProps> = ({ control, name, errors }) => (
+const RichTextEditor: React.FC<RichTextEditorProps> = ({ control, name, errors, label }) => (
   <div>
-    <label htmlFor={name} className="block text-sm font-medium text-gray-700">Description</label>
+    <label htmlFor={name} className="block text-sm font-medium text-gray-700">{label}</label>
     <Controller
       name={name}
       control={control}

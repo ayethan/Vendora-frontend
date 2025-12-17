@@ -6,31 +6,30 @@ import FormModel from './FormModel.js';
 import { toast } from 'react-toastify';
 
 
-type Category = {
+type ShopCategory = {
   _id: string;
   name: string;
-  description: string;
   image: string;
+  description: string;
   isActive?: boolean;
 };
 
-type CategoryFormData = Omit<Category, "_id"> & { _id?: string };
+type ShopCategoryFormData = Omit<ShopCategory, "_id"> & { _id?: string };
 
 function Index() {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<ShopCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [editingCategory, setEditingCategory] = useState<ShopCategory | null>(null);
 
 
-  const handleFormSubmit = async (categoryData: CategoryFormData) => {
+  const handleFormSubmit = async (categoryData: ShopCategoryFormData) => {
     try {
       if (categoryData._id) {
-        const cateDatawithId: Category = { _id: categoryData._id, ...categoryData };
-        await categoryService.updateCategory(cateDatawithId);
+        const cateDatawithId: ShopCategory = { _id: categoryData._id, ...categoryData };
+        await categoryService.updateShopCategory(categoryData._id, cateDatawithId);
         toast.success("Category Updated Successfully");
       } else {
-        const cateDatawithNotId: Category = { ...categoryData, _id: '' };
-        await categoryService.createCategory(cateDatawithNotId);
+        await categoryService.createShopCategory(categoryData);
         toast.success("Category Created Successfully");
       }
       handleCloseForm();
@@ -44,7 +43,7 @@ function Index() {
   const fetchCategories = async () => {
     setIsLoading(true);
     try {
-      const data = await categoryService.getCategory();
+      const data = await categoryService.getShopCategory();
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -61,14 +60,14 @@ function Index() {
     setEditingCategory({ _id: '', name: '', description: '', image: '', isActive: true });
   };
 
-  const handleEditClick = (category: Category) => {
+  const handleEditClick = (category: ShopCategory) => {
     setEditingCategory(category);
   };
 
   const handleDeleteClick = async (id: string) => {
     if(!window.confirm("Are you sure to delete?")) return;
     try {
-      await categoryService.deleteCategory(id);
+      await categoryService.deleteShopCategory(id);
       toast.success("Category Deleted Successfully");
       fetchCategories();
     } catch (error) {

@@ -1,56 +1,59 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import ProductCard from '../../../components/ProductCard';
+import productService, { type Product } from '../../../services/product.js';
+import ProductCard from '../../../components/ProductCard.js';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import { setCart } from '../../../store/userSlice.ts';
+import { setCart } from '../../../store/userSlice.js';
+import axios from 'axios';
 
-function ProductDetail() {
-  const { id } = useParams();
-  const [product, setProduct] = useState(null);
+const ProductDetail: React.FC = () => {
+  const { slug } = useParams<{ slug: string }>();
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [mainImage, setMainImage] = useState('');
   const [quantity, setQuantity] = useState(1);
-  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
 
-  const user = useSelector(state => state.user.user);
+  const user = useSelector((state: any) => state.user.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProduct = async () => {
+      if (!slug) return;
       setLoading(true);
       try {
-        const response = await axios.get(`/product/${id}`);
-        setProduct(response.data);
+        const productData = await productService.getProductBySlug(slug);
+        setProduct(productData);
 
-        if (response.data.image && response.data.image.length > 0) {
-          setMainImage(response.data.image[0]);
-        } else if (response.data.featured_image) {
-          setMainImage(response.data.featured_image);
+        if (productData.image && productData.image.length > 0) {
+          setMainImage(productData.featured_image);
+        } else if (productData.featured_image) {
+          setMainImage(productData.featured_image);
         }
 
         // Fetch related products
-        if (response.data.category && response.data._id) {
-          const relatedResponse = await axios.get(`/product/related/${response.data.category}/${response.data._id}`);
-          setRelatedProducts(relatedResponse.data || []);
+        if (productData.category && productData._id) {
+          const relatedData = await productService.getRelatedProducts(productData.category._id, productData._id);
+          setRelatedProducts(relatedData || []);
         }
       } catch (err) {
-        setError(err);
+        setError('Failed to fetch product details.');
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
     fetchProduct();
-  }, [id]);
+  }, [slug]);
 
-  const handleThumbnailClick = (image) => {
+  const handleThumbnailClick = (image: string) => {
     setMainImage(image);
   };
 
-  const handleQuantityChange = (e) => {
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
     if (!isNaN(value) && value > 0) {
       setQuantity(value);
@@ -63,6 +66,7 @@ function ProductDetail() {
       navigate('/signin');
       return;
     }
+    if (!product) return;
     try {
       const response = await axios.post('/cart/add', {
         productId: product._id,
@@ -85,7 +89,7 @@ function ProductDetail() {
   }
 
   if (error) {
-    return <div className="flex justify-center items-center h-screen"><div className="text-xl font-semibold text-red-500">Error: {error.message}</div></div>;
+    return <div className="flex justify-center items-center h-screen"><div className="text-xl font-semibold text-red-500">{error}</div></div>;
   }
 
   if (!product) {
@@ -103,7 +107,7 @@ function ProductDetail() {
             </li>
             <li><span className="mx-2">/</span></li>
             <li>
-              <Link to="/product" className="text-blue-600 hover:text-blue-800 transition-colors">Products</Link>
+              <Link to={`/restaurant/${product.restaurant.slug}`} className="text-blue-600 hover:text-blue-800 transition-colors">{product.restaurant.name}</Link>
             </li>
             <li><span className="mx-2">/</span></li>
             <li className="text-gray-500" aria-current="page">

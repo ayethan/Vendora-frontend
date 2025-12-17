@@ -4,14 +4,21 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { setCart } from '../store/userSlice.ts';
+import { setCart } from '../store/userSlice';
 import axios from 'axios';
+import { type Product } from '../services/product';
 
-function ProductModel({show, onClose, product}) {
+interface ProductModelProps {
+  show: boolean;
+  onClose: () => void;
+  product: Product;
+}
+
+const ProductModel: React.FC<ProductModelProps> = ({show, onClose, product}) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const DESCRIPTION_CHAR_LIMIT = 200;
 
-  const user = useSelector(state => state.user.user);
+  const user = useSelector((state: any) => state.user.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

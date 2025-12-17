@@ -1,8 +1,14 @@
 import React from 'react';
 import { FiSmartphone, FiSearch, FiTruck } from 'react-icons/fi';
 
+interface Step {
+    icon: React.ReactNode;
+    title: string;
+    description: string;
+}
+
 const HowItWorks = () => {
-    const steps = [
+    const steps: Step[] = [
         {
             icon: <FiSearch />,
             title: 'Find your food',

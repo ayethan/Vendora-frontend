@@ -29,8 +29,8 @@ function Index() {
         await categoryService.updateCategory(cateDatawithId);
         toast.success("Category Updated Successfully");
       } else {
-        const cateDataWithNotId: Category = { ...categoryData, _id: '' };
-        await categoryService.createCategory(cateDataWithNotId);
+        const { _id, ...rest } = categoryData;
+        await categoryService.createCategory(rest);
         toast.success("Category Created Successfully");
       }
       handleCloseForm();
@@ -44,8 +44,7 @@ function Index() {
   const fetchCategories = async () => {
     setIsLoading(true);
     try {
-      const data: Category[]
- = await categoryService.getCategory();
+      const data: Category[] = await categoryService.getCategory();
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);

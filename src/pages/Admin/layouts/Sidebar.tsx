@@ -1,16 +1,16 @@
-import { ListOrdered, NotebookText, StickyNote, User } from 'lucide-react';
+import { ListOrdered, NotebookText, StickyNote, User, Store } from 'lucide-react';
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom';
 
 
 function Sidebar() {
   const location = useLocation();
-  const isProductPath = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/category');
-  const [isProductMenuOpen, setProductMenuOpen] = useState(isProductPath);
+  const isRestaurantPath = location.pathname.startsWith('/admin/restaurants') || location.pathname.startsWith('/admin/category');
+  const [isProductMenuOpen, setProductMenuOpen] = useState(isRestaurantPath);
 
   useEffect(() => {
-    setProductMenuOpen(isProductPath);
-  }, [isProductPath]);
+    setProductMenuOpen(isRestaurantPath);
+  }, [isRestaurantPath]);
 
   return (
     <aside
@@ -52,7 +52,7 @@ function Sidebar() {
           <button
             onClick={() => setProductMenuOpen(!isProductMenuOpen)}
             className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-          isProductPath
+          isRestaurantPath
             ? 'bg-indigo-50 text-gray-900 font-semibold'
             : 'text-white hover:bg-gradient-to-r from-indigo-500 to-purple-500 hover:text-white'
             }`}
@@ -61,7 +61,7 @@ function Sidebar() {
               <path d="M21 16V8a2 2 0 0 0-2-2h-4l-2-2H7a2 2 0 0 0-2 2v10" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M3 16h18" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <span>Products</span>
+            <span>Restaurants</span>
             <svg className={`h-5 w-5 ml-auto transform transition-transform ${isProductMenuOpen ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
             </svg>
@@ -70,14 +70,14 @@ function Sidebar() {
             <ul className="pl-7 space-y-1 mt-1">
               <li>
                 <Link
-                  to="/admin/products"
+                  to="/admin/restaurants"
                   className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm ${
-                    location.pathname === '/admin/products'
+                    location.pathname === '/admin/restaurants'
                       ? 'text-white bg-gray-600'
                       : 'text-white hover:bg-gray-600'
                   }`}
                 >
-                  <span>Product List</span>
+                  <span>Restaurant List</span>
                 </Link>
               </li>
               <li>
@@ -92,6 +92,18 @@ function Sidebar() {
                   <span>Category</span>
                 </Link>
               </li>
+              {/* <li>
+                <Link
+                  to="/admin/restaurants"
+                  className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm ${
+                    location.pathname === '/admin/restaurants'
+                      ? 'text-white bg-gray-600'
+                      : 'text-white hover:bg-gray-600'
+                  }`}
+                >
+                  <span>Restaurants</span>
+                </Link>
+              </li> */}
             </ul>
           )}
         </li>

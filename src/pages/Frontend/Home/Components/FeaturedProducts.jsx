@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ProductCard from '../../../../components/ProductCard';
+import ProductCard from '../../../../components/ProductCard.js';
 import axios from 'axios';
 
 const FeaturedProducts = () => {

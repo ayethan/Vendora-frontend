@@ -1,19 +1,27 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import ProductFormModal from './ProductFormModal.js';
 import productService, { type Product } from '../../../services/product.js';
 import { DataTable } from "../../../components/ui/data-table.js";
 import { createProductColumns } from "./ProductColumns.js";
 import { toast } from 'react-toastify';
+import { useParams, useNavigate } from 'react-router-dom';
 
 function ProductList() {
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const { restaurantId } = useParams<{ restaurantId: string }>();
+  const navigate = useNavigate();
+
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchProducts = useCallback(async () => {
     setIsLoading(true);
     try {
-      const data = await productService.getProducts();
+      if (!restaurantId) {
+        console.error("Restaurant ID is missing.");
+        toast.error("Restaurant ID is missing.");
+        setIsLoading(false);
+        return;
+      }
+      const data = await productService.getProducts(restaurantId);
       setProducts(data);
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -21,62 +29,36 @@ function ProductList() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [restaurantId]);
 
   const handleCreateClick = () => {
-    setEditingProduct({
-      _id: '',
-      name: '',
-      description: '',
-      price: 0,
-      featured_image: '',
-      image: [],
-      category: {
-        _id: '',
-        name: ''
-      },
-      slug: '',
-      shopCategory: '',
-      brand: '',
-      isActive: true,
-      selling_price: 0,
-      discount: 0,
-      stock: 0,
-    });
+    if (!restaurantId) {
+      toast.error("Restaurant ID is missing.");
+      return;
+    }
+    navigate(`/admin/restaurants/${restaurantId}/products/create`);
   };
 
   const handleEditClick = (product: Product) => {
-    setEditingProduct(product);
+    if (!restaurantId) {
+      toast.error("Restaurant ID is missing.");
+      return;
+    }
+    navigate(`/admin/restaurants/${restaurantId}/products/${product._id}`);
   };
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
-  const handleCloseForm = () => {
-    setEditingProduct(null);
-  };
-
-  const handleFormSubmit = async (productData: Product) => {
-    try {
-      if (productData._id) {
-        await productService.updateProduct(productData);
-        toast.success("Product Updated Successfully");
-      } else {
-        await productService.createProduct(productData);
-        toast.success("Product Created Successfully");
-      }
-      handleCloseForm();
-      fetchProducts();
-    } catch (error) {
-      console.error('Error saving product:', error);
-      toast.error('Failed to save product.');
-    }
-  };
-
   const handleDeleteClick = async (productId: string) => {
+    if (!restaurantId) {
+      toast.error("Restaurant ID is missing.");
+      return;
+    }
+    if (!window.confirm("Are you sure to delete?")) return;
     try {
-      await productService.deleteProduct(productId);
+      await productService.deleteProduct(restaurantId, productId);
       toast.success("Product Deleted Successfully");
       fetchProducts();
     } catch (error) {
@@ -107,12 +89,6 @@ function ProductList() {
             No products found.
           </div>
         )}
-
-      <ProductFormModal
-        product={editingProduct}
-        onSubmit={handleFormSubmit}
-        onClose={handleCloseForm}
-      />
     </div>
   )
 }

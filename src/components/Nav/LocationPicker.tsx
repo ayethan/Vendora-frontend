@@ -2,7 +2,7 @@ import React from 'react';
 import { MapPin, ChevronDown } from 'lucide-react';
 
 interface LocationPickerProps {
-    hasLocation?: boolean; // Optional prop to make it more flexible
+    hasLocation?: boolean;
 }
 
 const LocationPicker: React.FC<LocationPickerProps> = ({ hasLocation = false }) => {
