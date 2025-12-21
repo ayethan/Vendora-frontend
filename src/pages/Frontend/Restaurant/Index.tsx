@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import restaurantService, { type Restaurant } from '../../../services/restaurant.js';
 import RestaurantCard from '../../../components/Restaurant/RestaurantCard.js';
 import RestaurantRowCard from '../../../components/Restaurant/RestaurantRowCard.js';
@@ -7,19 +8,30 @@ import { FiGrid, FiList } from 'react-icons/fi';
 const RestaurantList = () => {
     const [view, setView] = useState('grid');
     const [restaurantData, setRestaurantData] = useState<Restaurant[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [searchParams] = useSearchParams();
 
-    const fetchRestaurantData = async () => {
-        try {
-            const data = await restaurantService.getRestaurants();
-            setRestaurantData(data);
-        } catch (error) {
-            console.error('Error fetching restaurant data:', error);
-        }
-    };
+    const lat = searchParams.get('lat');
+    const lon = searchParams.get('lon');
 
     useEffect(() => {
+        const fetchRestaurantData = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const data = await restaurantService.getfrontendRestaurants({ lat, lon });
+                setRestaurantData(data);
+            } catch (err) {
+                console.error('Error fetching restaurant data:', err);
+                setError('Failed to fetch restaurants. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
         fetchRestaurantData();
-    }, []);
+    }, [lat, lon]);
 
     return (
         <div className="bg-gray-100 py-20">
@@ -57,21 +69,34 @@ const RestaurantList = () => {
                         </div>
                     </div>
                 </div>
-                <div
-                    className={`grid ${
-                        view === 'grid'
-                            ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12'
-                            : 'gap-4'
-                    }`}
-                >
-                    {restaurantData.map((restaurant) =>
-                        view === 'grid' ? (
-                            <RestaurantCard key={restaurant._id} restaurant={restaurant} />
+                {loading && <div className="text-center col-span-full">Loading restaurants...</div>}
+                {error && <div className="text-center col-span-full text-red-500">{error}</div>}
+                {!loading && !error && (
+                    <>
+                        {restaurantData.length === 0 ? (
+                            <div className="text-center col-span-full">
+                                <h3 className="text-2xl font-semibold text-gray-700">No restaurants found near you</h3>
+                                <p className="text-gray-500 mt-2">Try a different location or check back later.</p>
+                            </div>
                         ) : (
-                            <RestaurantRowCard key={restaurant._id} restaurant={restaurant} />
-                        )
-                    )}
-                </div>
+                            <div
+                                className={`grid ${
+                                    view === 'grid'
+                                        ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12'
+                                        : 'gap-4'
+                                }`}
+                            >
+                                {restaurantData.map((restaurant) =>
+                                    view === 'grid' ? (
+                                        <RestaurantCard key={restaurant._id} restaurant={restaurant} />
+                                    ) : (
+                                        <RestaurantRowCard key={restaurant._id} restaurant={restaurant} />
+                                    )
+                                )}
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
         </div>
     );

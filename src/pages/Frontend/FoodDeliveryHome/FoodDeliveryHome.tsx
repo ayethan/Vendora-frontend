@@ -1,12 +1,99 @@
-import React from 'react';
-import { Input } from '../../../components/ui/input';
-import { Button } from '../../../components/ui/button';
-import HowItWorks from './components/HowItWorks';
-import FoodDeliveryCategories from './components/FoodDeliveryCategories';
-import DealsOfTheDay from './components/DealsOfTheDay';
-import FeaturedRestaurants from './components/FeaturedRestaurants';
+import React, { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Input } from '../../../components/ui/input.js';
+import HowItWorks from './components/HowItWorks.js';
+import FoodDeliveryCategories from './components/FoodDeliveryCategories.js';
+import DealsOfTheDay from './components/DealsOfTheDay.js';
+import FeaturedRestaurants from './components/FeaturedRestaurants.js';
+import useClickOutside from "../../../components/Nav/hooks/useClickOutside.js";
+import axios from 'axios';
+import useDebounce from '../../../components/Nav/hooks/useDebounce.js';
+import { MapPin, Locate } from 'lucide-react';
 
 function FoodDeliveryHome() {
+  const navigate = useNavigate();
+  const [inputValue, setInputValue] = useState('');
+  const [locationSuggestions, setLocationSuggestions] = useState<any[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<{ lat: string; lon: string; display_name: string } | null>(null);
+
+  const suggestionsRef = useRef(null);
+
+  useClickOutside(suggestionsRef, () => {
+      setLocationSuggestions([]);
+  });
+
+  const debouncedInputValue = useDebounce(inputValue, 500);
+
+  useEffect(() => {
+    if (debouncedInputValue && debouncedInputValue.length > 2) {
+      const fetchSuggestions = async () => {
+        try {
+          const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+            params: { q: debouncedInputValue, format: 'json', addressdetails: 1, limit: 5 },
+            withCredentials: false
+          });
+          setLocationSuggestions(response.data || []);
+        } catch (error) {
+          console.error("Error fetching location suggestions:", error);
+          setLocationSuggestions([]);
+        }
+      };
+      fetchSuggestions();
+    } else {
+      setLocationSuggestions([]);
+    }
+  }, [debouncedInputValue]);
+
+  const handleLocationSuggestionClick = (suggestion: any) => {
+        setInputValue(suggestion.display_name);
+        setSelectedLocation({
+            lat: suggestion.lat,
+            lon: suggestion.lon,
+            display_name: suggestion.display_name
+        });
+        setLocationSuggestions([]);
+        navigate(`/restaurants?lat=${suggestion.lat}&lon=${suggestion.lon}`);
+    };
+
+    const handleUseCurrentLocation = () => {
+      if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+              (position) => {
+                  const { latitude, longitude } = position.coords;
+                  navigate(`/restaurants?lat=${latitude}&lon=${longitude}`);
+              },
+              (error) => {
+                  console.error("Error getting current location:", error);
+                  alert("Could not get your location. Please check your browser settings.");
+              }
+          );
+      } else {
+          alert("Geolocation is not supported by this browser.");
+      }
+    };
+
+  const handleFindFood = async () => {
+    if (selectedLocation) {
+        navigate(`/restaurants?lat=${selectedLocation.lat}&lon=${selectedLocation.lon}`);
+    } else if (inputValue) {
+        try {
+            const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+                params: { q: inputValue, format: 'json', limit: 1 },
+                withCredentials: false
+            });
+            if (response.data && response.data.length > 0) {
+                const { lat, lon } = response.data[0];
+                navigate(`/restaurants?lat=${lat}&lon=${lon}`);
+            } else {
+                console.log("Could not find location for:", inputValue);
+                // Optionally: show an error message to the user
+            }
+        } catch (error) {
+            console.error("Error geocoding input:", error);
+        }
+    }
+  };
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="relative bg-cover bg-center h-[600px]" style={{ backgroundImage: "url('/img/cover-image.jpg')" }}>
@@ -14,22 +101,33 @@ function FoodDeliveryHome() {
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-white px-4">
           <h1 className="text-6xl font-extrabold text-center mb-6">Food, Delivered.</h1>
           <p className="text-2xl text-center mb-10">Order from the best restaurants near you.</p>
-          <div className="flex w-full max-w-xl bg-white rounded-full shadow-2xl p-2">
+          <div className="flex items-center w-full max-w-2xl bg-white rounded-full shadow-2xl p-4 relative" ref={suggestionsRef}>
+            <MapPin className="text-gray-400 mx-2" />
             <Input
               type="text"
               placeholder="Enter your delivery address"
-              className="flex-grow bg-transparent border-none text-lg text-gray-800 focus:ring-0"
+              className="flex-grow bg-transparent border-none text-lg text-gray-800 focus:border focus:border-red-500"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleFindFood()}
             />
-            <Button type="submit" variant="default" className="bg-red-500 hover:bg-red-600 text-white rounded-full px-8 text-lg">
-              Find Food
-            </Button>
-          </div>
-          <p className="mt-4 text-sm">
-            Or{' '}
-            <button className="underline hover:text-red-300 transition-colors">
-              use my current location
+            <button onClick={handleUseCurrentLocation} className="ml-2 p-2 rounded-full hover:bg-gray-300 bg-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer">
+              <Locate className="h-5 w-5 text-red-600" />
             </button>
-          </p>
+            {locationSuggestions.length > 0 && (
+                <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto shadow-lg top-full left-0 right-0">
+                    {locationSuggestions.map((suggestion) => (
+                        <li
+                            key={suggestion.place_id}
+                            className="p-2 cursor-pointer hover:bg-gray-100 text-gray-800"
+                            onClick={() => handleLocationSuggestionClick(suggestion)}
+                        >
+                            {suggestion.display_name}
+                        </li>
+                    ))}
+                </ul>
+            )}
+          </div>
         </div>
       </div>
       <HowItWorks />

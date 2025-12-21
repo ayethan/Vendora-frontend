@@ -22,7 +22,16 @@ export interface Restaurant {
     _id: string;
     name: string;
   };
-  openingHours: string;
+  openingTimes: {
+    day: string;
+    open: string;
+    close: string;
+  }[];
+  deliveryInfo: {
+    deliveryCost: number;
+    smallOrderSurcharge: number;
+    estimatedDeliveryTime: number;
+  };
   image: string;
   owner: string;
   products?: Product[];
@@ -34,6 +43,24 @@ export interface Restaurant {
 // Get all restaurants
 const getRestaurants = async (): Promise<Restaurant[]> => {
   const response = await axios.get(API_URL, {
+    withCredentials: true,
+  });
+  return response.data;
+};
+// Get all restaurants
+interface GetRestaurantsParams {
+  lat?: string | null;
+  lon?: string | null;
+}
+
+const getfrontendRestaurants = async ({ lat, lon }: GetRestaurantsParams): Promise<Restaurant[]> => {
+  const frontend = 'frontend';
+  const params = new URLSearchParams();
+  if (lat) params.append('lat', lat);
+  if (lon) params.append('lon', lon);
+
+  const response = await axios.get(`${API_URL}/${frontend}`, {
+    params,
     withCredentials: true,
   });
   return response.data;
@@ -83,6 +110,7 @@ const deleteRestaurant = async (restaurantId: string): Promise<any> => {
 
 const restaurantService = {
   getRestaurants,
+  getfrontendRestaurants,
   getRestaurantById,
   getRestaurantBySlug,
   createRestaurant,

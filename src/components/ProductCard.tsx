@@ -45,28 +45,80 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
     }
   };
 
- return (
-  <div className="bg-white rounded-sm overflow-hidden group hover:shadow-xl transition-shadow duration-300 relative" key={product._id}>
-    <Link to={`/product/${product.slug}`}> {/* Link for the image */}
-      <div className="w-full h-55 overflow-hidden">
-        <img src={product.featured_image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer" />
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  const DESCRIPTION_CHAR_LIMIT = 100;
+
+  const toggleDescription = () => {
+    setShowFullDescription(!showFullDescription);
+  };
+
+  const renderDescription = () => {
+    if (!product || !product.description) return null;
+
+    if (product.description.length <= DESCRIPTION_CHAR_LIMIT) {
+      return (
+        <div
+          className="text-gray-700"
+          dangerouslySetInnerHTML={{ __html: product.description }}
+        ></div>
+      );
+    }
+
+    const truncatedDescription =
+      product.description.substring(0, DESCRIPTION_CHAR_LIMIT) + '...';
+    return (
+      <div>
+        <div
+          className="text-gray-700"
+          dangerouslySetInnerHTML={{
+            __html: showFullDescription
+              ? product.description
+              : truncatedDescription,
+          }}
+        ></div>
+        <button
+          onClick={toggleDescription}
+          className="text-blue-600 hover:text-blue-800 font-semibold mt-2"
+        >
+          {showFullDescription ? 'Show Less' : 'Read More'}
+        </button>
       </div>
-    </Link>
-    <div className="absolute inset-0 bg-gray-100/10 bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center space-x-4 opacity-0 group-hover:opacity-100 pointer-events-none">
-      <button onClick={handleModelOpen} className="bg-white text-indigo-600 p-3 rounded-full hover:bg-indigo-500 hover:text-white transition-colors cursor-pointer pointer-events-auto">
-        <FiEye className="w-5 h-5" />
-      </button>
-      <button onClick={handleAddToCart} className="bg-white text-indigo-600 p-3 rounded-full hover:bg-indigo-500 hover:text-white transition-colors cursor-pointer pointer-events-auto">
-        <FiShoppingCart className="w-5 h-5" />
-      </button>
-    </div>
-    <div className="p-4">
-      <Link to={`/product/${product.slug}`}> {/* Link for the product name */}
-        <h3 className="text-lg font-medium text-gray-800 mb-2 truncate cursor-pointer">{product.name}</h3>
+    );
+  };
+
+ return (
+  <div className="bg-white rounded-lg overflow-hidden group hover:shadow-xl transition-shadow duration-300 " key={product._id}>
+    <div className="relative">
+      <Link to={`/product/${product.slug}`}>
+        <div className="w-full h-56 overflow-hidden">
+          <img src={product.featured_image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        </div>
       </Link>
-      <div className="flex items-center justify-between">
-        <p className={product.selling_price ? 'text-red-400 text-xl line-through': 'text-gray-600 font-semibold text-xl'}> ${product.price.toFixed(2)} </p>
-        <p className="text-gray-600 font-semibold text-xl">${product.selling_price.toFixed(2)}</p>
+      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center space-x-4 opacity-0 group-hover:opacity-100">
+        <button onClick={handleModelOpen} className="bg-white text-gray-800 p-3 rounded-full hover:bg-gray-200 transition-colors">
+          <FiEye className="w-5 h-5" />
+        </button>
+      </div>
+    </div>
+    <div className="p-4 flex flex-col flex-grow">
+      <Link to={`/product/${product.slug}`}>
+        <h3 className="text-lg font-semibold text-gray-800 mb-2 truncate">{product.name}</h3>
+      </Link>
+      <div className="text-sm text-gray-600 mb-4 flex-grow">
+        {renderDescription()}
+      </div>
+      <div className="flex items-center justify-between mt-auto">
+        <div className="flex items-center">
+          <p className={`text-xl font-bold ${product.selling_price ? 'text-red-500' : 'text-gray-800'}`}>
+            ${product.selling_price ? product.selling_price.toFixed(2) : product.price.toFixed(2)}
+          </p>
+          {product.selling_price && (
+            <p className="text-gray-500 line-through ml-2">${product.price.toFixed(2)}</p>
+          )}
+        </div>
+        <button onClick={handleAddToCart} className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors">
+          <FiShoppingCart className="w-5 h-5" />
+        </button>
       </div>
     </div>
     <ProductModel show={showModel} onClose={handleModelClose} product={product} />
