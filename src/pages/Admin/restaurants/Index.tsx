@@ -76,7 +76,7 @@ function Index() {
     }
   };
 
-  const handleViewProducts = (restaurantId: string) => { // Added
+  const handleViewProducts = (restaurantId: string) => {
     navigate(`/admin/restaurants/${restaurantId}/products`);
   };
 

@@ -25,13 +25,14 @@ function FoodDeliveryHome() {
   const debouncedInputValue = useDebounce(inputValue, 500);
 
   useEffect(() => {
-    if (debouncedInputValue && debouncedInputValue.length > 2) {
+    if (debouncedInputValue && debouncedInputValue.length > 1) {
       const fetchSuggestions = async () => {
         try {
           const response = await axios.get('https://nominatim.openstreetmap.org/search', {
             params: { q: debouncedInputValue, format: 'json', addressdetails: 1, limit: 5 },
             withCredentials: false
           });
+          console.log('data',response.data);
           setLocationSuggestions(response.data || []);
         } catch (error) {
           console.error("Error fetching location suggestions:", error);
@@ -97,16 +98,16 @@ function FoodDeliveryHome() {
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="relative bg-cover bg-center h-[600px]" style={{ backgroundImage: "url('/img/cover-image.jpg')" }}>
-        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="absolute inset-0 bg-black opacity-40"></div>
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-white px-4">
           <h1 className="text-6xl font-extrabold text-center mb-6">Food, Delivered.</h1>
           <p className="text-2xl text-center mb-10">Order from the best restaurants near you.</p>
-          <div className="flex items-center w-full max-w-2xl bg-white rounded-full shadow-2xl p-4 relative" ref={suggestionsRef}>
+          <div className="flex items-center w-full max-w-md bg-white rounded-full shadow-2xl p-4 relative" ref={suggestionsRef}>
             <MapPin className="text-gray-400 mx-2" />
             <Input
               type="text"
               placeholder="Enter your delivery address"
-              className="flex-grow bg-transparent border-none text-lg text-gray-800 focus:border focus:border-red-500"
+              className="flex-grow bg-transparent border-none text-lg text-gray-800 focus:border focus:border-red-500 font-semibold"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleFindFood()}
@@ -115,14 +116,16 @@ function FoodDeliveryHome() {
               <Locate className="h-5 w-5 text-red-600" />
             </button>
             {locationSuggestions.length > 0 && (
-                <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto shadow-lg top-full left-0 right-0">
+                <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-90 overflow-y-auto shadow-lg top-full left-0 right-0 p-4">
                     {locationSuggestions.map((suggestion) => (
                         <li
                             key={suggestion.place_id}
-                            className="p-2 cursor-pointer hover:bg-gray-100 text-gray-800"
+                            className="p-2 cursor-pointer hover:bg-gray-100 text-gray-800 flex items-center"
                             onClick={() => handleLocationSuggestionClick(suggestion)}
                         >
-                            {suggestion.display_name}
+                            <span className="p-1 rounded-full hover:bg-gray-300 bg-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500 mr-3"><MapPin className="" /></span>
+                            <h1 className="mr-2">{suggestion.address.city || suggestion.address.town || suggestion.address.village || suggestion.display_name || suggestion.address.state},</h1>
+                            {suggestion.address.country}
                         </li>
                     ))}
                 </ul>
