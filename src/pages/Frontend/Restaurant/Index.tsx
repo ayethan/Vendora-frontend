@@ -4,16 +4,21 @@ import restaurantService, { type Restaurant } from '../../../services/restaurant
 import RestaurantCard from '../../../components/Restaurant/RestaurantCard.js';
 import RestaurantRowCard from '../../../components/Restaurant/RestaurantRowCard.js';
 import { FiGrid, FiList } from 'react-icons/fi';
+import Store from '../../../store/store.js'
+import { useSelector } from 'react-redux';
 
+type RootState = ReturnType<typeof Store.getState>;
 const RestaurantList = () => {
+    const address = useSelector((state: RootState) => state.location);
+
     const [view, setView] = useState('grid');
     const [restaurantData, setRestaurantData] = useState<Restaurant[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchParams] = useSearchParams();
 
-    const lat = searchParams.get('lat');
-    const lon = searchParams.get('lon');
+    const lat = searchParams.get('lat') || address.latitude;
+    const lon = searchParams.get('lon') || address.longitude;
 
     useEffect(() => {
         const fetchRestaurantData = async () => {
@@ -82,7 +87,7 @@ const RestaurantList = () => {
                             <div
                                 className={`grid ${
                                     view === 'grid'
-                                        ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12'
+                                        ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12'
                                         : 'gap-4'
                                 }`}
                             >

@@ -14,6 +14,16 @@ export type Product = {
     _id: string;
     name: string;
   };
+  addons: {
+    _id: string;
+    name: string;
+    price: number;
+  }[];
+  flavours: {
+    name: string;
+    extra_price: number;
+    is_default: boolean;
+  }[];
   slug: string;
   shopCategory: string;
   selling_price: number;
@@ -22,6 +32,11 @@ export type Product = {
   brand: string;
   isActive: boolean;
 }
+
+export type ProductData = Omit<Product, "_id" | "restaurant" | "category" | "addons"> & {
+  category: string;
+  addons: string[];
+};
 
 // Get all products for a restaurant
 const getProducts = async (restaurantId: string): Promise<Product[]> => {
@@ -40,7 +55,7 @@ const getProductById = async (restaurantId: string, productId: string): Promise<
 };
 
 // Create a product for a restaurant
-const createProduct = async (restaurantId: string, productData: Omit<Product, "_id" | "restaurant">): Promise<Product> => {
+const createProduct = async (restaurantId: string, productData: ProductData): Promise<Product> => {
   const response = await axios.post(`/restaurants/${restaurantId}/products`, productData, {
     withCredentials: true,
   });
@@ -48,7 +63,7 @@ const createProduct = async (restaurantId: string, productData: Omit<Product, "_
 };
 
 // Update a product
-const updateProduct = async (restaurantId: string, productId: string, productData: Omit<Product, "_id" | "restaurant">): Promise<Product> => {
+const updateProduct = async (restaurantId: string, productId: string, productData: Partial<ProductData>): Promise<Product> => {
   const response = await axios.put(
     `/restaurants/${restaurantId}/products/${productId}`,
     productData,
@@ -89,4 +104,3 @@ const productService = {
 };
 
 export default productService;
-

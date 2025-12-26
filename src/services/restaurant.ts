@@ -63,6 +63,7 @@ const getfrontendRestaurants = async ({ lat, lon }: GetRestaurantsParams): Promi
     params,
     withCredentials: true,
   });
+  console.log('restaurant product',response.data);
   return response.data;
 };
 

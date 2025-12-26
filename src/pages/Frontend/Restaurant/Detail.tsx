@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import restaurantService, { type Restaurant } from '../../../services/restaurant.js';
 import ProductCard from '../../../components/ProductCard.js';
 import { type Product } from '../../../services/product.js';
 
 import InfoModal from '../../../components/InfoModal.js';
 import { Bike, Clock9 } from 'lucide-react';
+import Store from '../../../store/store.js'
+import { useSelector } from 'react-redux';
+
+type RootState = ReturnType<typeof Store.getState>;
+
 const RestaurantDetail = () => {
+    const address = useSelector((state: RootState) => state.location);
+
     const { slug } = useParams<{ slug: string }>();
     const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
     const [loading, setLoading] = useState(false);
@@ -14,6 +21,7 @@ const RestaurantDetail = () => {
     const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
     useEffect(() => {
+        console.log('address address', address)
         const fetchRestaurant = async () => {
             if (!slug) return;
             try {
@@ -79,14 +87,44 @@ const RestaurantDetail = () => {
     const productEntries = Object.entries(groupedProducts);
 
     return (
-        <div className="bg-gray-50 min-h-screen pb-8">
+        <div className="bg-white min-h-screen pb-8">
             <img
                 src={restaurant.image}
                 alt={restaurant.name}
                 className="w-full h-96 object-cover"
             />
             <div className="container mx-auto px-4">
-                <div className="bg-white rounded-t-lg shadow-lg overflow-hidden -mt-20 relative z-10 ">
+                <nav className="flex pt-4 text-white -mt-20  " aria-label="Breadcrumb">
+                  <ol className="inline-flex items-center space-x-1 md:space-x-3">
+                    <li className="inline-flex items-center">
+                      <Link to="/" className="text-sm font-medium text-black hover:text-gray-600 font-semibold">
+                        Home
+                      </Link>
+                    </li>
+                    <li>
+                      <div className="flex items-center">
+                        <svg className="w-3 h-3 text-white mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                          <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                        <Link to={`/restaurants?lat=${address.latitude}&lon=${address.longitude}`} className="text-sm font-medium text-black hover:text-gray-600 font-semibold">
+                          Restaurants
+                        </Link>
+                      </div>
+                    </li>
+                    <li aria-current="page">
+                      <div className="flex items-center">
+                        <svg className="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                          <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                        <span className="text-sm font-medium text-gray-500 truncate max-w-[150px] md:max-w-[250px] font-semibold">
+                          {restaurant.name}
+                        </span>
+                      </div>
+                    </li>
+                  </ol>
+                </nav>
+
+                <div className="bg-white rounded-t-lg overflow-hidden mb-2 relative z-10 ">
                     <div className="p-8">
                         <div className="flex items-center mb-4 gap-4">
                             <h1 className="text-4xl font-bold text-gray-900">{restaurant.name}</h1>
@@ -119,7 +157,7 @@ const RestaurantDetail = () => {
                             <div className="hidden md:block text-gray-300">|</div>
                             <div>
                                 <button onClick={() => setIsInfoModalOpen(true)} className="text-red-500 hover:underline cursor-pointer font-semibold">
-                                    Restaurant Details
+                                    More Info
                                 </button>
                             </div>
                             <div className="flex-grow md:text-right">
@@ -137,12 +175,24 @@ const RestaurantDetail = () => {
                 <InfoModal
                     isOpen={isInfoModalOpen}
                     onClose={() => setIsInfoModalOpen(false)}
-                    title="Restaurant Details"
+                    title={restaurant.name}
                 >
                     <div className="grid grid-cols-1 gap-8">
                         <div>
                             <h3 className="text-xl font-bold text-gray-800 mb-3">Address</h3>
                             <p>{restaurant.address}, {restaurant.city}, {restaurant.country}</p>
+                            {restaurant.location && restaurant.location.coordinates && (
+                                <div className="mt-4">
+                                    <iframe
+                                        width="100%"
+                                        height="300"
+                                        style={{ border: 0 }}
+                                        loading="lazy"
+                                        allowFullScreen
+                                        src={`https://maps.google.com/maps?q=${restaurant.location.coordinates[1]},${restaurant.location.coordinates[0]}&z=15&output=embed`}
+                                    ></iframe>
+                                </div>
+                            )}
                         </div>
                         <div>
                             <h3 className="text-xl font-bold text-gray-800 mb-3">Opening Times</h3>
@@ -185,7 +235,7 @@ const RestaurantDetail = () => {
                                 <a
                                     key={category}
                                     href={`#${category}`}
-                                    className={`text-lg font-semibold pb-2 ${activeCategory === category
+                                    className={`text-md font-semibold pb-2 ${activeCategory === category
                                         ? 'text-red-600 border-b-2 border-red-600'
                                         : 'text-gray-600 hover:text-red-600'
                                         }`}
@@ -197,9 +247,9 @@ const RestaurantDetail = () => {
                     </div>
 
                     {productEntries.map(([category, products]) => (
-                        <div key={category} id={category} className="category-section mb-12">
-                            <h2 className="text-3xl font-bold text-gray-900 mb-6 text-left">{category}</h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        <div key={category} id={category} className="category-section mb-9">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-left">{category}</h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {products.map((product: Product) => (
                                     <ProductCard key={product._id} product={product} />
                                 ))}

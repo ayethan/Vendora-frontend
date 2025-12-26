@@ -2,9 +2,13 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useForm,
   type SubmitHandler,
   type Control,
-  type FieldErrors } from "react-hook-form";
-import { useParams, useNavigate } from "react-router-dom"; // Added
+  useFieldArray,
+  type FieldErrors,
+  Controller} from "react-hook-form";
+import { useParams, useNavigate } from "react-router-dom";
+import Select from "react-select";
 import FormInput from "../../../components/Form/FormInput.js";
+
 import FormSelect from "../../../components/Form/FormSelect.js";
 import RichTextEditor from "../../../components/Form/RichTextEditor.js";
 import ImageUpload from "../../../components/Form/ImageUpload.js";
@@ -12,7 +16,7 @@ import DisplayImage from "./DisplayImage.js";
 import uploadImage from "../../../helpers/uploadImage.js";
 import { toast } from "react-toastify";
 import categoryService, { type Category } from "../../../services/category.js";
-import productService, { type Product } from "../../../services/product.js"; // Updated to use productService
+import productService, { type Product, type ProductData } from "../../../services/product.js";
 
 interface ProductFormData {
   name: string;
@@ -28,6 +32,12 @@ interface ProductFormData {
   stock: number;
   brand: string;
   isActive: boolean;
+  addons: string[];
+  flavours: {
+    name: string;
+    extra_price: number;
+    is_default: boolean;
+  }[];
 }
 
 function ProductFormModal() {
@@ -42,10 +52,20 @@ function ProductFormModal() {
     setValue,
     watch,
     formState: { errors },
-  } = useForm<ProductFormData>();
+  } = useForm<ProductFormData>({ mode: 'onChange' });
+
+  const {
+    fields,
+    append,
+    remove
+  } = useFieldArray({
+    control,
+    name: "flavours",
+  });
 
   const productImages = watch("image", []);
   const [categoryData, setCategoryData] = useState<Category[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [openFullScreenImage, setOpenFullScreenImage] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState("");
   const [isUploadingFeaturedImage, setIsUploadingFeaturedImage] = useState(false);
@@ -61,9 +81,21 @@ function ProductFormModal() {
     }
   }, []);
 
-  // Effect to fetch product if editing or initialize form
+  const fetchProducts = useCallback(async () => {
+    if (!restaurantId) return;
+    try {
+      const data = await productService.getProducts(restaurantId);
+      const filteredData = productId ? data.filter(p => p._id !== productId) : data;
+      setAllProducts(filteredData);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      toast.error("Failed to fetch products for addon selection.");
+    }
+  }, [restaurantId, productId]);
+
   useEffect(() => {
-    fetchCategories(); // Fetch categories always
+    fetchCategories();
+    fetchProducts();
 
     if (productId && restaurantId) {
       setIsProductLoading(true);
@@ -83,6 +115,8 @@ function ProductFormModal() {
             stock: product.stock || 0,
             brand: product.brand || "",
             isActive: product.isActive != null ? product.isActive : true,
+            addons: product.addons?.map(addon => addon._id) || [],
+            flavours: product.flavours || [],
           });
         })
         .catch((error) => {
@@ -109,9 +143,13 @@ function ProductFormModal() {
         stock: 0,
         brand: "",
         isActive: true,
+        addons: [],
+        flavours: [],
       });
     }
-  }, [productId, restaurantId, reset, navigate, fetchCategories]);
+  }, [productId, restaurantId, reset, navigate, fetchCategories, fetchProducts]);
+
+
 
   const onFormSubmit: SubmitHandler<ProductFormData> = async (data) => {
     if (!restaurantId) {
@@ -119,7 +157,7 @@ function ProductFormModal() {
       return;
     }
 
-    const productToSubmit = {
+    const productToSubmit: ProductData = {
       name: data.name,
       featured_image: data.featured_image,
       category: data.category,
@@ -133,17 +171,20 @@ function ProductFormModal() {
       stock: Number(data.stock),
       image: data.image || [],
       discount: Number(data.discount),
+      addons: data.addons || [],
+      flavours: data.flavours || [],
     };
 
+
     try {
-      if (productId) { // Editing existing product
+      if (productId) {
         await productService.updateProduct(restaurantId, productId, productToSubmit);
         toast.success("Product Updated Successfully");
-      } else { // Creating new product
+      } else {
         await productService.createProduct(restaurantId, productToSubmit);
         toast.success("Product Created Successfully");
       }
-      navigate(`/admin/restaurants/${restaurantId}/products`); // Navigate back to list
+      navigate(`/admin/restaurants/${restaurantId}/products`);
     } catch (error) {
       console.error('Error saving product:', error);
       toast.error('Failed to save product.');
@@ -248,14 +289,15 @@ function ProductFormModal() {
               rules={{ required: "Status is required" }}
             >
               <option value="">Select Status</option>
-              <option value="true">Active</option>
-              <option value="false">Inactive</option>
+              <option key="true" value="true">Active</option>
+              <option key="false" value="false">Inactive</option>
             </FormSelect>
             <RichTextEditor
               name="description"
               control={control as unknown as Control<Record<string, any>>}
               errors={errors as unknown as FieldErrors<Record<string, any>>}
               label="Description"
+              maxLength={100}
             />
             <FormInput
               label="Price"
@@ -291,6 +333,59 @@ function ProductFormModal() {
                   Number.isInteger(value) || "Stock must be a whole number",
               }}
             />
+            <div>
+              <label htmlFor="addons" className="block text-sm font-medium text-gray-700">Add-ons</label>
+              <Controller
+                name="addons"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    isMulti
+                    options={allProducts.map(p => ({ value: p._id, label: p.name }))}
+                    value={allProducts.map(p => ({ value: p._id, label: p.name })).filter(option => field.value?.includes(option.value))}
+                    onChange={selectedOptions => field.onChange(selectedOptions.map(option => option.value))}
+                  />
+                )}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Flavours</label>
+              {fields.map((field, index) => (
+                <div key={field.id} className="flex items-center space-x-2 mt-2">
+                  <input
+                    {...register(`flavours.${index}.name`)}
+                    placeholder="Name"
+                    className="p-2 border border-gray-200 rounded-md w-full"
+                  />
+                  <input
+                    {...register(`flavours.${index}.extra_price`)}
+                    type="number"
+                    placeholder="Extra Price"
+                    className="p-2 border border-gray-200 rounded-md w-full"
+                  />
+                  <label>
+                    <input
+                      {...register(`flavours.${index}.is_default`)}
+                      type="checkbox"
+                    />
+                    Default
+                  </label>
+                  <button type="button" onClick={() => remove(index)} className="px-2 py-1 bg-red-500 text-white rounded">
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => append({ name: "", extra_price: 0, is_default: false })}
+                className="mt-2 px-4 py-2 bg-gray-200 rounded text-sm cursor-pointer"
+              >
+                Add Flavour
+              </button>
+            </div>
+
             <div>
               <label
                 htmlFor="featured_image"

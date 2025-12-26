@@ -1,7 +1,23 @@
 import { configureStore } from '@reduxjs/toolkit'
 import userReducer from './userSlice.ts'
-export default configureStore({
+import locationReducer from './locationSlice.ts'
+import { loadLocation, saveLocation } from './storage.js'
+
+const persistedLocation = loadLocation();
+
+const store = configureStore({
   reducer: {
-    user:userReducer
+    user: userReducer,
+    location: locationReducer,
   },
+  preloadedState: {
+    location: persistedLocation
+  }
 })
+
+store.subscribe(() => {
+  saveLocation(store.getState().location);
+});
+
+
+export default store;

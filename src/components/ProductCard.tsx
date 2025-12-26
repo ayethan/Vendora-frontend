@@ -46,7 +46,7 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   };
 
   const [showFullDescription, setShowFullDescription] = useState(false);
-  const DESCRIPTION_CHAR_LIMIT = 100;
+  const DESCRIPTION_WORD_LIMIT = 9;
 
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
@@ -55,70 +55,65 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const renderDescription = () => {
     if (!product || !product.description) return null;
 
-    if (product.description.length <= DESCRIPTION_CHAR_LIMIT) {
-      return (
-        <div
-          className="text-gray-700"
-          dangerouslySetInnerHTML={{ __html: product.description }}
-        ></div>
-      );
-    }
+    const words = product.description.split(/\s+/); // Split by whitespace to get words
+    const needsTruncation = words.length > DESCRIPTION_WORD_LIMIT;
 
-    const truncatedDescription =
-      product.description.substring(0, DESCRIPTION_CHAR_LIMIT) + '...';
+    const truncatedDescription = needsTruncation
+      ? words.slice(0, DESCRIPTION_WORD_LIMIT).join(' ') + '...'
+      : product.description;
+
     return (
       <div>
         <div
           className="text-gray-700"
           dangerouslySetInnerHTML={{
-            __html: showFullDescription
+            __html: showFullDescription || !needsTruncation
               ? product.description
               : truncatedDescription,
           }}
         ></div>
-        <button
-          onClick={toggleDescription}
-          className="text-blue-600 hover:text-blue-800 font-semibold mt-2"
-        >
-          {showFullDescription ? 'Show Less' : 'Read More'}
-        </button>
+        {/* {needsTruncation && (
+          <button
+            onClick={toggleDescription}
+            className="text-blue-600 hover:text-blue-800 font-semibold mt-2"
+          >
+            {showFullDescription ? 'Less' : 'More'}
+          </button>
+        )} */}
       </div>
     );
   };
 
  return (
-  <div className="bg-white rounded-lg overflow-hidden group hover:shadow-xl transition-shadow duration-300 " key={product._id}>
-    <div className="relative">
-      <Link to={`/product/${product.slug}`}>
-        <div className="w-full h-56 overflow-hidden">
-          <img src={product.featured_image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+  <div className="bg-white border-1 rounded-lg overflow-hidden group hover:shadow-xl transition-shadow duration-300 flex flex-col md:flex-row min-h-[150px]" key={product._id}>
+      <div onClick={handleModelOpen} className="p-4 flex flex-col justify-between md:w-2/3 flex-grow">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2 truncate">{product.name}</h3>
+          <div className="flex items-center mb-2">
+            <p className={`text-xl ${product.selling_price ? 'text-red-500' : 'text-gray-800'}`}>
+              ${product.selling_price ? product.selling_price.toFixed(2) : product.price.toFixed(2)}
+            </p>
+            {product.selling_price && (
+              <p className="text-gray-500 line-through ml-2">${product.price.toFixed(2)}</p>
+            )}
         </div>
-      </Link>
-      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center space-x-4 opacity-0 group-hover:opacity-100">
-        <button onClick={handleModelOpen} className="bg-white text-gray-800 p-3 rounded-full hover:bg-gray-200 transition-colors">
-          <FiEye className="w-5 h-5" />
-        </button>
+        <div className="text-sm text-gray-600 mb-4 flex-grow">
+          {renderDescription()}
+        </div>
+
       </div>
     </div>
-    <div className="p-4 flex flex-col flex-grow">
-      <Link to={`/product/${product.slug}`}>
-        <h3 className="text-lg font-semibold text-gray-800 mb-2 truncate">{product.name}</h3>
-      </Link>
-      <div className="text-sm text-gray-600 mb-4 flex-grow">
-        {renderDescription()}
+
+    <div className="relative md:w-1/3 h-48 md:h-full pt-4 md:pt-0">
+      <div className="w-full h-full overflow-hidden flex items-center justify-center">
+        <img src={product.featured_image} alt={product.name} className="w-28 h-28 rounded-lg"/>
       </div>
-      <div className="flex items-center justify-between mt-auto">
-        <div className="flex items-center">
-          <p className={`text-xl font-bold ${product.selling_price ? 'text-red-500' : 'text-gray-800'}`}>
-            ${product.selling_price ? product.selling_price.toFixed(2) : product.price.toFixed(2)}
-          </p>
-          {product.selling_price && (
-            <p className="text-gray-500 line-through ml-2">${product.price.toFixed(2)}</p>
-          )}
+      <div className="absolute inset-0 flex items-center justify-center space-x-4">
+        <div className="flex mt-15">
+          <button onClick={handleAddToCart} className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors">
+            <FiShoppingCart className="w-5 h-5" />
+          </button>
         </div>
-        <button onClick={handleAddToCart} className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors">
-          <FiShoppingCart className="w-5 h-5" />
-        </button>
       </div>
     </div>
     <ProductModel show={showModel} onClose={handleModelClose} product={product} />

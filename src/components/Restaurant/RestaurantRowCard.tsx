@@ -16,16 +16,13 @@ const RestaurantRowCard = ({ restaurant }: { restaurant: Restaurant }) => {
         >
             <div className="relative w-48 h-32 overflow-hidden">
                 <img src={restaurant.image} alt={restaurant.name} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" />
-                {/* {restaurant.promotion && (
-                    <div className="absolute top-0 left-0 bg-red-500 text-white text-xs font-bold p-2 rounded-br-lg">
-                        {restaurant.promotion}
-                    </div>
-                )} */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+                <div className="absolute bottom-0 left-0 p-4">
+                    <h3 className="text-lg font-bold text-white mb-1 truncate">{restaurant.name}</h3>
+                    <p className="text-gray-300 text-sm">{restaurant.cuisine?.name}</p>
+                </div>
             </div>
             <div className="p-4 flex-1">
-                <h3 className="text-lg font-bold text-gray-900 mb-1 truncate">{restaurant.name}</h3>
-                <p className="text-gray-600 text-sm mb-2">{restaurant.cuisine?.name}</p>
-
                 <div className="flex items-center justify-between text-sm text-gray-800">
                     <div className="flex items-center">
                         <svg className="w-4 h-4 mr-1 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">

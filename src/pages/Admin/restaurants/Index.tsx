@@ -7,10 +7,10 @@ import FormModel from './FormModel.js';
 
 
 
-import { useNavigate } from 'react-router-dom'; // Added import
+import { useNavigate } from 'react-router-dom';
 
 function Index() {
-  const navigate = useNavigate(); // Added
+  const navigate = useNavigate();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -83,7 +83,7 @@ function Index() {
   const columns = createRestaurantColumns({
     onEdit: handleEditClick,
     onDelete: handleDeleteClick,
-    onViewProducts: handleViewProducts // Added
+    onViewProducts: handleViewProducts
   });
 
   return (

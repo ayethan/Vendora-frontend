@@ -18,13 +18,13 @@ import type { Restaurant } from "../../../services/restaurant.ts";
 interface RestaurantColumnProps {
   onEdit: (restaurant: Restaurant) => void;
   onDelete: (id: string) => void;
-  onViewProducts: (id: string) => void; // Added
+  onViewProducts: (id: string) => void;
 }
 
 export const createRestaurantColumns = ({
   onEdit,
   onDelete,
-  onViewProducts, // Added
+  onViewProducts,
 }: RestaurantColumnProps): ColumnDef<Restaurant>[] => [
   {
     id: "select",

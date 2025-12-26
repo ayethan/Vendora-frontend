@@ -9,12 +9,15 @@ import useClickOutside from "../../../components/Nav/hooks/useClickOutside.js";
 import axios from 'axios';
 import useDebounce from '../../../components/Nav/hooks/useDebounce.js';
 import { MapPin, Locate } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { setLocation } from '../../../store/locationSlice.js';
 
 function FoodDeliveryHome() {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState('');
   const [locationSuggestions, setLocationSuggestions] = useState<any[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<{ lat: string; lon: string; display_name: string } | null>(null);
+  const dispatch = useDispatch();
 
   const suggestionsRef = useRef(null);
 
@@ -29,7 +32,7 @@ function FoodDeliveryHome() {
       const fetchSuggestions = async () => {
         try {
           const response = await axios.get('https://nominatim.openstreetmap.org/search', {
-            params: { q: debouncedInputValue, format: 'json', addressdetails: 1, limit: 5 },
+            params: { q: debouncedInputValue, format: 'json', addressdetails: 1, limit: 1, countrycodes: 'vn', },
             withCredentials: false
           });
           console.log('data',response.data);
@@ -47,11 +50,13 @@ function FoodDeliveryHome() {
 
   const handleLocationSuggestionClick = (suggestion: any) => {
         setInputValue(suggestion.display_name);
-        setSelectedLocation({
-            lat: suggestion.lat,
-            lon: suggestion.lon,
-            display_name: suggestion.display_name
-        });
+        const locationData = {
+          lat: suggestion.lat,
+          lon: suggestion.lon,
+          display_name: suggestion.display_name
+        };
+        setSelectedLocation(locationData);
+        dispatch(setLocation(locationData));
         setLocationSuggestions([]);
         navigate(`/restaurants?lat=${suggestion.lat}&lon=${suggestion.lon}`);
     };
@@ -59,8 +64,26 @@ function FoodDeliveryHome() {
     const handleUseCurrentLocation = () => {
       if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
-              (position) => {
+              async (position) => {
                   const { latitude, longitude } = position.coords;
+                  try {
+                    const response = await axios.get('https://nominatim.openstreetmap.org/reverse', {
+                        params: { lat: latitude, lon: longitude, format: 'json' },
+                        withCredentials: false
+                    });
+                    if (response.data) {
+                        const locationData = {
+                            lat: String(latitude),
+                            lon: String(longitude),
+                            display_name: response.data.display_name
+                        };
+                        setInputValue(response.data.display_name);
+                        setSelectedLocation(locationData);
+                        dispatch(setLocation(locationData));
+                    }
+                } catch (error) {
+                    console.error("Error reverse geocoding:", error);
+                }
                   navigate(`/restaurants?lat=${latitude}&lon=${longitude}`);
               },
               (error) => {
@@ -116,19 +139,21 @@ function FoodDeliveryHome() {
               <Locate className="h-5 w-5 text-red-600" />
             </button>
             {locationSuggestions.length > 0 && (
-                <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-90 overflow-y-auto shadow-lg top-full left-0 right-0 p-4">
-                    {locationSuggestions.map((suggestion) => (
-                        <li
-                            key={suggestion.place_id}
-                            className="p-2 cursor-pointer hover:bg-gray-100 text-gray-800 flex items-center"
-                            onClick={() => handleLocationSuggestionClick(suggestion)}
-                        >
-                            <span className="p-1 rounded-full hover:bg-gray-300 bg-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500 mr-3"><MapPin className="" /></span>
-                            <h1 className="mr-2">{suggestion.address.city || suggestion.address.town || suggestion.address.village || suggestion.display_name || suggestion.address.state},</h1>
-                            {suggestion.address.country}
-                        </li>
-                    ))}
-                </ul>
+              <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-90 overflow-y-auto shadow-lg top-full left-0 right-0 p-4">
+                  {locationSuggestions.map((suggestion) => (
+                      <li
+                          key={suggestion.place_id}
+                          className="p-2 cursor-pointer hover:bg-gray-100 text-gray-800 flex items-center"
+                          onClick={() => handleLocationSuggestionClick(suggestion)}
+                      >
+                          <span className="p-1 rounded-full hover:bg-gray-300 bg-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500 mr-3"><MapPin className="" /></span>
+                          <div className="flex flex-col">
+                            <span className="font-semibold">{suggestion.address.city || suggestion.address.town || suggestion.address.village || suggestion.display_name || suggestion.address.state}</span>
+                            <span className="text-sm text-gray-500">{suggestion.address.country}</span>
+                          </div>
+                      </li>
+                  ))}
+              </ul>
             )}
           </div>
         </div>

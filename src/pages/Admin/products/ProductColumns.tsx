@@ -90,8 +90,8 @@ export const createProductColumns = ({
 
   // 4. Status Column
   {
-    accessorFn: (row) => row.isActive, // Explicitly access isActive property
-    id: "isActive", // Add an ID for the column
+    accessorFn: (row) => row.isActive,
+    id: "isActive",
     header: "Status",
     cell: ({ row }) => {
       const isActive = row.original.isActive === true;
